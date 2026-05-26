@@ -24,3 +24,7 @@ $response = $kernel->handle(
 $response->send();
 
 $kernel->terminate($request, $response);
+
+$app->make(Illuminate\Contracts\Http\Kernel::class)
+    ->handle(Illuminate\Http\Request::capture())
+    ->send();
