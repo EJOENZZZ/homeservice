@@ -1,0 +1,1 @@
+document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",o=>{const t=document.querySelector(e.getAttribute("href"));t&&(o.preventDefault(),t.scrollIntoView({behavior:"smooth"}))})});window.addEventListener("scroll",()=>{const e=document.querySelector(".navbar");e&&(e.style.boxShadow=window.scrollY>10?"0 2px 16px rgba(0,0,0,.08)":"")});

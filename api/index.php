@@ -1,15 +1,5 @@
+
 <?php
-
-define('LARAVEL_START', microtime(true));
-
-// Vercel serverless — fix paths
-$_SERVER['SCRIPT_FILENAME'] = __DIR__ . '/../public/index.php';
-$_SERVER['DOCUMENT_ROOT']   = __DIR__ . '/../public';
-
-// Fix the REQUEST_URI if needed
-if (!isset($_SERVER['REQUEST_URI'])) {
-    $_SERVER['REQUEST_URI'] = '/';
-}
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -25,6 +15,3 @@ $response->send();
 
 $kernel->terminate($request, $response);
 
-$app->make(Illuminate\Contracts\Http\Kernel::class)
-    ->handle(Illuminate\Http\Request::capture())
-    ->send();
