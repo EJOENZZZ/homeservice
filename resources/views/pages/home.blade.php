@@ -32,8 +32,17 @@
 
         <div class="popular-tags">
             <span class="pop-label">Popular:</span>
-            @foreach(['Plumbing','Electrical','Carpentry','Cleaning','Painting'] as $tag)
-                <a href="/services?service={{ $tag }}" class="tag">{{ $tag }}</a>
+            @foreach([
+                ['Plumbing',   '🔧'],
+                ['Electrical', '⚡'],
+                ['Carpentry',  '🪚'],
+                ['Cleaning',   '🧹'],
+                ['Painting',   '🎨'],
+            ] as [$tag, $icon])
+                <a href="/services?service={{ $tag }}" class="category-pill">
+                    <span class="category-pill-icon">{{ $icon }}</span>
+                    <span>{{ $tag }}</span>
+                </a>
             @endforeach
         </div>
     </div>
