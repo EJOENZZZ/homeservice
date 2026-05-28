@@ -1,4 +1,3 @@
-```php id="e2s0ae"
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,4 +122,3 @@
 
 </body>
 </html>
-```
