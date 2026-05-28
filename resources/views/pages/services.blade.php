@@ -1,52 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="services-hero">
-    <div class="services-hero-inner">
-        <div class="section-label">OUR PROFESSIONALS</div>
-        <h1 class="section-title" style="margin-bottom:12px">Find the Right Expert</h1>
-        <p style="color:var(--gray-mid);font-size:1rem;margin-bottom:36px">Browse verified professionals ready to help with your home needs.</p>
-
-        <form class="search-bar" action="/services" method="GET" style="max-width:680px;margin:0 auto">
-            <div class="search-field">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                </svg>
-                <input type="text" name="service" value="{{ request('service') }}" placeholder="Service (e.g. Plumbing)">
-            </div>
-            <div class="search-divider"></div>
-            <div class="search-field">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                    <circle cx="12" cy="9" r="2.5"/>
-                </svg>
-                <input type="text" name="location" value="{{ request('location') }}" placeholder="Location">
-            </div>
-            <button type="submit" class="btn-primary search-btn">Search</button>
-        </form>
-    </div>
-</div>
-
 <div class="page-wrap" style="padding-top:40px">
-    <div class="popular-tags" style="margin-bottom:24px;justify-content:flex-start">
-        <span class="pop-label">Popular:</span>
-        @foreach([
-            ['Plumbing',   '🔧'],
-            ['Electrical', '⚡'],
-            ['Carpentry',  '🪚'],
-            ['Cleaning',   '🧹'],
-            ['Painting',   '🎨'],
-        ] as [$tag, $icon])
-            <a href="/services?service={{ $tag }}" class="category-pill {{ request('service')==$tag ? 'category-pill-active' : '' }}">
-                <span class="category-pill-icon">{{ $icon }}</span>
-                <span>{{ $tag }}</span>
-            </a>
-        @endforeach
-        @if(request('service') || request('location'))
-            <a href="/services" class="category-pill" style="border-color:#FECACA;color:#DC2626">✕ Clear</a>
-        @endif
-    </div>
-
     <div class="services-results-header">
         <span class="services-count">{{ count($professionals) }} professional{{ count($professionals) != 1 ? 's' : '' }} found</span>
     </div>
