@@ -12,39 +12,6 @@
         <div class="hero-underline"></div>
         <p class="hero-sub">Find verified plumbers, electricians, carpenters, and more.<br>Get quotes in minutes — not days.</p>
 
-        <form class="search-bar" action="/services" method="GET">
-            <div class="search-field">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                </svg>
-                <input type="text" name="service" placeholder="What service do you need?">
-            </div>
-            <div class="search-divider"></div>
-            <div class="search-field">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                    <circle cx="12" cy="9" r="2.5"/>
-                </svg>
-                <input type="text" name="location" placeholder="Your location">
-            </div>
-            <button type="submit" class="btn-primary search-btn">Find Pros</button>
-        </form>
-
-        <div class="popular-tags">
-            <span class="pop-label">Popular:</span>
-            @foreach([
-                ['Plumbing',   '🔧'],
-                ['Electrical', '⚡'],
-                ['Carpentry',  '🪚'],
-                ['Cleaning',   '🧹'],
-                ['Painting',   '🎨'],
-            ] as [$tag, $icon])
-                <a href="/services?service={{ $tag }}" class="category-pill">
-                    <span class="category-pill-icon">{{ $icon }}</span>
-                    <span>{{ $tag }}</span>
-                </a>
-            @endforeach
-        </div>
     </div>
 </section>
 
