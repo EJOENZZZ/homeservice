@@ -6,7 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'HomeService - Expert Home Services' }}</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="/build/assets/app-BOwNuBSn.css">
+    <script src="/build/assets/app-DYkQ-fdl.js" defer></script>
 </head>
 <body>
 
