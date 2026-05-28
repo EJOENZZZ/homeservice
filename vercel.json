@@ -1,8 +1,8 @@
 {
   "version": 2,
   "framework": null,
-  "installCommand": "npm ci",
-  "buildCommand": "npm run build",
+  "installCommand": "echo skip",
+  "buildCommand": "echo skip",
   "outputDirectory": "public",
   "functions": {
     "api/index.php": {
