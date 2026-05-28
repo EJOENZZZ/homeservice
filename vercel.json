@@ -1,8 +1,8 @@
 {
   "version": 2,
   "framework": null,
-  "installCommand": "echo skip",
-  "buildCommand": "echo skip",
+  "installCommand": "composer install --no-dev --optimize-autoloader && npm ci",
+  "buildCommand": "npm run build",
   "outputDirectory": "public",
   "functions": {
     "api/index.php": {
