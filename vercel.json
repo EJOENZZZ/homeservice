@@ -1,8 +1,8 @@
 {
   "version": 2,
   "framework": null,
-  "installCommand": "echo 'vendor already committed'",
-  "buildCommand": "echo 'no build needed'",
+  "installCommand": "echo skip",
+  "buildCommand": "echo skip",
   "outputDirectory": "public",
   "functions": {
     "api/index.php": {
