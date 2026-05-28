@@ -28,13 +28,22 @@
 </div>
 
 <div class="page-wrap" style="padding-top:40px">
-    <div class="services-filter-bar">
-        <span class="pop-label">Filter by:</span>
-        @foreach(['Plumbing','Electrical','Carpentry','Cleaning','Painting'] as $tag)
-            <a href="/services?service={{ $tag }}" class="tag {{ request('service')==$tag ? 'tag-active' : '' }}">{{ $tag }}</a>
+    <div class="popular-tags" style="margin-bottom:24px;justify-content:flex-start">
+        <span class="pop-label">Popular:</span>
+        @foreach([
+            ['Plumbing',   '🔧'],
+            ['Electrical', '⚡'],
+            ['Carpentry',  '🪚'],
+            ['Cleaning',   '🧹'],
+            ['Painting',   '🎨'],
+        ] as [$tag, $icon])
+            <a href="/services?service={{ $tag }}" class="category-pill {{ request('service')==$tag ? 'category-pill-active' : '' }}">
+                <span class="category-pill-icon">{{ $icon }}</span>
+                <span>{{ $tag }}</span>
+            </a>
         @endforeach
         @if(request('service') || request('location'))
-            <a href="/services" class="tag" style="border-color:#FECACA;color:#DC2626">✕ Clear</a>
+            <a href="/services" class="category-pill" style="border-color:#FECACA;color:#DC2626">✕ Clear</a>
         @endif
     </div>
 

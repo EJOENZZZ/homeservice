@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'HomeService - Expert Home Services' }}</title>
 
-    <link rel="stylesheet" href="/build/assets/app-Dna-Kzg9.css">
+    <link rel="stylesheet" href="/build/assets/app-Cy8pVWIW.css">
     <script src="/build/assets/app-DYkQ-fdl.js" defer></script>
 </head>
 <body>
