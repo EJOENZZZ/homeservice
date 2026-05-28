@@ -21,12 +21,15 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            return redirect()->intended('/');
+        try {
+            if (Auth::attempt($credentials, $request->boolean('remember'))) {
+                $request->session()->regenerate();
+                return redirect()->intended('/');
+            }
+            return back()->withErrors(['email' => 'Invalid email or password.'])->withInput();
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => 'Unable to connect to the database. Please try again later.'])->withInput();
         }
-
-        return back()->withErrors(['email' => 'Invalid email or password.'])->withInput();
     }
 
     public function showRegister()
@@ -37,19 +40,22 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name'                  => 'required|string|max:255',
-            'email'                 => 'required|email|unique:users',
-            'password'              => 'required|min:8|confirmed',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users',
+            'password' => 'required|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-
-        Auth::login($user);
-        return redirect('/');
+        try {
+            $user = User::create([
+                'name'     => $data['name'],
+                'email'    => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+            Auth::login($user);
+            return redirect('/');
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => 'Unable to connect to the database. Please try again later.'])->withInput();
+        }
     }
 
     public function logout(Request $request)
