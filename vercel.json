@@ -1,8 +1,8 @@
 {
   "version": 2,
   "framework": null,
-  "installCommand": "composer install --no-dev --optimize-autoloader",
-  "buildCommand": "php artisan config:cache && php artisan route:cache && php artisan view:cache",
+  "installCommand": "curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev --optimize-autoloader",
+  "buildCommand": "php composer.phar config:cache; php artisan route:cache; php artisan view:cache",
   "outputDirectory": "public",
   "functions": {
     "api/index.php": {
@@ -10,10 +10,10 @@
     }
   },
   "routes": [
-    { "src": "/build/(.*)", "dest": "/build/$1" },
-    { "src": "/css/(.*)",   "dest": "/css/$1" },
-    { "src": "/js/(.*)",    "dest": "/js/$1" },
+    { "src": "/build/(.*)",  "dest": "/build/$1" },
+    { "src": "/css/(.*)",    "dest": "/css/$1" },
+    { "src": "/js/(.*)",     "dest": "/js/$1" },
     { "src": "/images/(.*)", "dest": "/images/$1" },
-    { "src": "/(.*)",       "dest": "/api/index.php" }
+    { "src": "/(.*)",        "dest": "/api/index.php" }
   ]
 }
