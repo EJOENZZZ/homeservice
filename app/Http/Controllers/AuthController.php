@@ -110,23 +110,21 @@ class AuthController extends Controller
         $request->validate(['code' => 'required|digits:6']);
 
         try {
-            $email = $request->input('email');
+            $email = $request->input('email') ?? $request->query('email');
             $code  = $request->input('code');
 
             if (!$email) {
-                return back()->withErrors(['code' => 'DEBUG: email=' . json_encode($request->all())]);
+                return back()->withErrors(['code' => 'Session expired. Please register again.']);
             }
 
             $user = User::where('email', $email)->first();
 
             if (!$user) {
-                return back()->withErrors(['code' => 'DEBUG: no user for: ' . $email]);
+                return back()->withErrors(['code' => 'User not found.']);
             }
 
             if ((string)$user->verification_code !== (string)$code) {
-                return back()
-                    ->withErrors(['code' => 'DEBUG: input=' . $code . ' db=' . $user->verification_code])
-                    ->withInput();
+                return back()->withErrors(['code' => 'Invalid verification code.'])->withInput();
             }
 
             if (now()->gt($user->verification_expires_at)) {
