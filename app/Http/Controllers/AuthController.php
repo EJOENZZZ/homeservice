@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -28,7 +29,7 @@ class AuthController extends Controller
             }
             return back()->withErrors(['email' => 'Invalid email or password.'])->withInput();
         } catch (\Exception $e) {
-            return back()->withErrors(['email' => 'Unable to connect to the database. Please try again later.'])->withInput();
+            return back()->withErrors(['email' => $e->getMessage()])->withInput();
         }
     }
 
@@ -56,9 +57,10 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
             Auth::login($user);
-            return redirect('/');
+            $user->sendEmailVerificationNotification();
+            return redirect('/email/verify')->with('success', 'Account created! Please check your email to verify your account.');
         } catch (\Exception $e) {
-            return back()->withErrors(['email' => 'Unable to connect to the database. Please try again later.'])->withInput();
+            return back()->withErrors(['email' => $e->getMessage()])->withInput();
         }
     }
 
