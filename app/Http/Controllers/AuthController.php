@@ -30,15 +30,14 @@ class AuthController extends Controller
             }
 
             if (!$user->is_verified) {
-                // Resend code
                 $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
                 $user->update([
                     'verification_code'       => $code,
                     'verification_expires_at' => now()->addMinutes(10),
                 ]);
                 $this->sendCode($user->email, $user->name, $code);
-                session(['verify_email' => $user->email]);
-                return redirect('/verify-code')->with('info', 'Please verify your email first. A new code has been sent.');
+                return redirect('/verify-code?email=' . urlencode($user->email))
+                    ->with('info', 'Please verify your email first. A new code has been sent.');
             }
 
             Auth::login($user, $request->boolean('remember'));
@@ -92,18 +91,18 @@ class AuthController extends Controller
             }
 
             $this->sendCode($user->email, $user->name, $code);
-            session(['verify_email' => $user->email]);
-            return redirect('/verify-code');
+            return redirect('/verify-code?email=' . urlencode($user->email));
 
         } catch (\Exception $e) {
             return back()->withErrors(['email' => $e->getMessage()])->withInput();
         }
     }
 
-    public function showVerify()
+    public function showVerify(Request $request)
     {
-        if (!session('verify_email')) return redirect('/register');
-        return view('auth.verify-code', ['email' => session('verify_email')]);
+        $email = session('verify_email') ?? $request->query('email');
+        if (!$email) return redirect('/register');
+        return view('auth.verify-code', ['email' => $email]);
     }
 
     public function verify(Request $request)
@@ -111,17 +110,19 @@ class AuthController extends Controller
         $request->validate(['code' => 'required|digits:6']);
 
         try {
-            $email = session('verify_email');
+            $email = $request->input('email') ?? session('verify_email');
             $user  = User::where('email', $email)->first();
 
-            if (!$user) return redirect('/register');
+            if (!$user) {
+                return back()->withErrors(['code' => 'Session expired. Please register again.']);
+            }
 
-            if ($user->verification_code !== $request->code) {
-                return back()->withErrors(['code' => 'Invalid verification code.']);
+            if ((string)$user->verification_code !== (string)$request->code) {
+                return back()->withErrors(['code' => 'Invalid verification code.'])->withInput();
             }
 
             if (now()->gt($user->verification_expires_at)) {
-                return back()->withErrors(['code' => 'Code has expired. Please request a new one.']);
+                return back()->withErrors(['code' => 'Code expired. Request a new one.'])->withInput();
             }
 
             $user->update([
@@ -133,7 +134,7 @@ class AuthController extends Controller
 
             Auth::login($user);
             session()->forget('verify_email');
-            return redirect('/')->with('success', 'Email verified! Welcome to HomeService.');
+            return redirect('/')->with('success', 'Email verified! Welcome to HomeFix.');
 
         } catch (\Exception $e) {
             return back()->withErrors(['code' => $e->getMessage()]);
@@ -143,7 +144,7 @@ class AuthController extends Controller
     public function resendCode(Request $request)
     {
         try {
-            $email = session('verify_email');
+            $email = $request->input('email') ?? session('verify_email');
             $user  = User::where('email', $email)->first();
             if (!$user) return redirect('/register');
 
@@ -153,7 +154,8 @@ class AuthController extends Controller
                 'verification_expires_at' => now()->addMinutes(10),
             ]);
             $this->sendCode($user->email, $user->name, $code);
-            return back()->with('success', 'New code sent to your email.');
+            return redirect('/verify-code?email=' . urlencode($email))
+                ->with('success', 'New code sent to your email!');
 
         } catch (\Exception $e) {
             return back()->withErrors(['code' => $e->getMessage()]);
@@ -165,14 +167,14 @@ class AuthController extends Controller
         Mail::html("
             <div style='font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;'>
                 <h2 style='font-size:1.5rem;margin-bottom:8px;'>Verify your email</h2>
-                <p style='color:#6B7280;margin-bottom:24px;'>Hi {$name}, use this code to verify your HomeService account:</p>
+                <p style='color:#6B7280;margin-bottom:24px;'>Hi {$name}, use this code to verify your HomeFix account:</p>
                 <div style='background:#EFF6FF;border-radius:12px;padding:24px;text-align:center;margin-bottom:24px;'>
                     <span style='font-size:2.5rem;font-weight:800;letter-spacing:12px;color:#2563EB;'>{$code}</span>
                 </div>
                 <p style='color:#6B7280;font-size:.88rem;'>This code expires in <strong>10 minutes</strong>. If you didn't request this, ignore this email.</p>
             </div>
         ", function ($m) use ($email) {
-            $m->to($email)->subject('Your HomeService verification code');
+            $m->to($email)->subject('Your HomeFix verification code');
         });
     }
 
