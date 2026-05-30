@@ -99,6 +99,9 @@ return [
                     'prefix_indexes' => true,
                     'search_path'    => 'public',
                     'sslmode'        => 'require',
+                    'options'        => [
+                        PDO::ATTR_TIMEOUT => 10,
+                    ],
                 ];
             }
             return [
