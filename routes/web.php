@@ -10,16 +10,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Auth
-Route::get('/login',    [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login',   [AuthController::class, 'login']);
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register',[AuthController::class, 'register']);
-Route::post('/logout',  [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::get('/login',       [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login',      [AuthController::class, 'login']);
+Route::get('/register',    [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register',   [AuthController::class, 'register']);
+Route::post('/logout',     [AuthController::class, 'logout'])->name('logout');
 
-// Email Verification
-Route::get('/verify-code',         [AuthController::class, 'showVerify'])->name('verify.show');
-Route::post('/verify-code',        [AuthController::class, 'verify'])->name('verify.submit');
-Route::post('/verify-code/resend', [AuthController::class, 'resendCode'])->name('verify.resend');
+// Email verification
+Route::get('/verify-code',  [AuthController::class, 'showVerify'])->name('verify.show');
+Route::post('/verify-code', [AuthController::class, 'verify'])->name('verify.submit');
+Route::post('/resend-code', [AuthController::class, 'resendCode'])->name('verify.resend');
 
 // Professionals
 Route::get('/pros/{id}', [ProfessionalController::class, 'show'])->name('pro.show');
