@@ -10,11 +10,18 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    private string $adminEmail    = 'admin@homefix.app';
+    private string $adminPassword = 'Admin@12345';
+    private string $secretKey     = 'homefix-admin-2026';
+
+    private function validToken(): string
+    {
+        return hash('sha256', $this->adminPassword . $this->secretKey);
+    }
+
     private function guard()
     {
-        $token = request()->cookie('admin_token');
-        $valid = hash('sha256', env('ADMIN_PASSWORD', 'Admin@12345') . env('APP_KEY'));
-        if ($token !== $valid) {
+        if (request()->cookie('admin_token') !== $this->validToken()) {
             return redirect('/admin/login');
         }
         return null;
@@ -22,9 +29,9 @@ class AdminController extends Controller
 
     public function showLogin()
     {
-        $token = request()->cookie('admin_token');
-        $valid = hash('sha256', env('ADMIN_PASSWORD', 'Admin@12345') . env('APP_KEY'));
-        if ($token === $valid) return redirect('/admin/dashboard');
+        if (request()->cookie('admin_token') === $this->validToken()) {
+            return redirect('/admin/dashboard');
+        }
         return view('admin.login');
     }
 
@@ -35,19 +42,12 @@ class AdminController extends Controller
             'password' => 'required',
         ]);
 
-        $adminEmail    = env('ADMIN_EMAIL', 'admin@homefix.app');
-        $adminPassword = env('ADMIN_PASSWORD', 'Admin@12345');
-
-        // DEBUG
-        if ($request->email !== $adminEmail || $request->password !== $adminPassword) {
-            return back()->withErrors([
-                'email' => 'DEBUG — input email: [' . $request->email . '] expected: [' . $adminEmail . '] | input pass: [' . $request->password . '] expected: [' . $adminPassword . ']'
-            ]);
+        if ($request->email === $this->adminEmail && $request->password === $this->adminPassword) {
+            return redirect('/admin/dashboard')
+                ->withCookie(cookie()->forever('admin_token', $this->validToken()));
         }
 
-        $token = hash('sha256', $adminPassword . env('APP_KEY'));
-        return redirect('/admin/dashboard')
-            ->withCookie(cookie()->forever('admin_token', $token));
+        return back()->withErrors(['email' => 'Invalid email or password.']);
     }
 
     public function logout()
@@ -56,30 +56,30 @@ class AdminController extends Controller
             ->withCookie(\Cookie::forget('admin_token'));
     }
 
-    // DASHBOARD
     public function dashboard()
     {
         if ($r = $this->guard()) return $r;
 
-        $stats = [
-            'users'         => User::where('is_verified', true)->count(),
-            'professionals' => Professional::count(),
-            'bookings'      => Booking::count(),
-            'pending'       => Booking::where('status', 'pending')->count(),
-            'confirmed'     => Booking::where('status', 'confirmed')->count(),
-            'completed'     => Booking::where('status', 'completed')->count(),
-        ];
-
-        $recentBookings = Booking::with(['user', 'professional'])
-            ->latest()->limit(8)->get();
-
-        $recentUsers = User::where('is_verified', true)
-            ->latest()->limit(5)->get();
+        try {
+            $stats = [
+                'users'         => User::where('is_verified', true)->count(),
+                'professionals' => Professional::count(),
+                'bookings'      => Booking::count(),
+                'pending'       => Booking::where('status', 'pending')->count(),
+                'confirmed'     => Booking::where('status', 'confirmed')->count(),
+                'completed'     => Booking::where('status', 'completed')->count(),
+            ];
+            $recentBookings = Booking::with(['user', 'professional'])->latest()->limit(8)->get();
+            $recentUsers    = User::where('is_verified', true)->latest()->limit(5)->get();
+        } catch (\Exception $e) {
+            $stats          = ['users'=>0,'professionals'=>0,'bookings'=>0,'pending'=>0,'confirmed'=>0,'completed'=>0];
+            $recentBookings = collect();
+            $recentUsers    = collect();
+        }
 
         return view('admin.dashboard', compact('stats', 'recentBookings', 'recentUsers'));
     }
 
-    // BOOKINGS
     public function bookings(Request $request)
     {
         if ($r = $this->guard()) return $r;
@@ -99,7 +99,6 @@ class AdminController extends Controller
         return back()->with('success', 'Booking status updated.');
     }
 
-    // USERS
     public function users(Request $request)
     {
         if ($r = $this->guard()) return $r;
@@ -122,7 +121,6 @@ class AdminController extends Controller
         return back()->with('success', 'User deleted.');
     }
 
-    // PROFESSIONALS
     public function professionals()
     {
         if ($r = $this->guard()) return $r;
@@ -193,7 +191,6 @@ class AdminController extends Controller
         return back()->with('success', 'Professional deleted.');
     }
 
-    // TESTIMONIALS
     public function testimonials()
     {
         if ($r = $this->guard()) return $r;
