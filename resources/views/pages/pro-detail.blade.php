@@ -48,14 +48,17 @@
                 </div>
 
                 @auth
-                    <a href="/book?professional_id={{ $pro->id }}" class="btn-primary btn-full" style="margin-top:24px;justify-content:center">
-                        Book Now
-                    </a>
-                @else
-                    <a href="/login" class="btn-primary btn-full" style="margin-top:24px;justify-content:center">
-                        Log in to Book
-                    </a>
-                @endauth
+    <a href="/book?professional_id={{ $pro->id }}" class="btn-primary" style="padding:14px 40px;font-size:1rem">
+        Book Now
+    </a>
+    <a href="/messages/{{ $pro->id }}" class="btn-outline" style="padding:14px 40px;font-size:1rem">
+        💬 Message
+    </a>
+@else
+    <a href="/login" class="btn-primary" style="padding:14px 40px;font-size:1rem">
+        Log in to Book
+    </a>
+@endauth
 
                 <a href="/services" class="btn-outline btn-full" style="margin-top:10px;text-align:center">
                     Browse Other Pros

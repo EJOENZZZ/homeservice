@@ -25,8 +25,9 @@
             <li><a href="/contact" class="{{ request()->is('contact') ? 'active' : '' }}">Contact</a></li>
 
             @auth
-            <li><a href="/my-bookings" class="{{ request()->is('my-bookings') ? 'active' : '' }}">My Bookings</a></li>
-            @endauth
+<li><a href="/my-bookings" class="{{ request()->is('my-bookings') ? 'active' : '' }}">My Bookings</a></li>
+<li><a href="/messages" class="{{ request()->is('messages*') ? 'active' : '' }}">Messages</a></li>
+@endauth
         </ul>
 
         <div class="nav-actions" id="navActions">
