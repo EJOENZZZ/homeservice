@@ -12,26 +12,32 @@ class AdminController extends Controller
 {
     private string $adminEmail    = 'admin@homefix.app';
     private string $adminPassword = 'Admin@12345';
-    private string $secretKey     = 'homefix-admin-2026';
+    private string $adminToken    = 'hf-admin-token-2026-secret';
 
-    private function validToken(): string
+    private function isLoggedIn(): bool
     {
-        return hash('sha256', $this->adminPassword . $this->secretKey);
+        return request()->query('t') === $this->adminToken
+            || request()->cookie('hf_admin') === $this->adminToken;
     }
 
     private function guard()
     {
-        if (request()->cookie('admin_token') !== $this->validToken()) {
+        if (!$this->isLoggedIn()) {
             return redirect('/admin/login');
         }
         return null;
     }
 
+    private function withToken($redirect)
+    {
+        return $redirect->withCookie(
+            cookie('hf_admin', $this->adminToken, 60 * 24 * 30, '/', null, false, false)
+        );
+    }
+
     public function showLogin()
     {
-        if (request()->cookie('admin_token') === $this->validToken()) {
-            return redirect('/admin/dashboard');
-        }
+        if ($this->isLoggedIn()) return redirect('/admin/dashboard');
         return view('admin.login');
     }
 
@@ -42,18 +48,22 @@ class AdminController extends Controller
             'password' => 'required',
         ]);
 
-        if ($request->email === $this->adminEmail && $request->password === $this->adminPassword) {
-            return redirect('/admin/dashboard')
-                ->withCookie(cookie()->forever('admin_token', $this->validToken()));
+        if (
+            trim($request->email)    === $this->adminEmail &&
+            trim($request->password) === $this->adminPassword
+        ) {
+            return $this->withToken(redirect('/admin/dashboard?t=' . $this->adminToken));
         }
 
-        return back()->withErrors(['email' => 'Invalid email or password.']);
+        return back()->withErrors([
+            'email' => 'Invalid. Email: ' . trim($request->email) . ' | Pass: ' . trim($request->password)
+        ]);
     }
 
     public function logout()
     {
         return redirect('/admin/login')
-            ->withCookie(\Cookie::forget('admin_token'));
+            ->withCookie(cookie('hf_admin', '', -1));
     }
 
     public function dashboard()
