@@ -7,16 +7,50 @@ use App\Models\Booking;
 use App\Models\Professional;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
     private function guard()
     {
-        if (!session('admin_logged_in')) {
+        $token = request()->cookie('admin_token');
+        $valid = hash('sha256', env('ADMIN_PASSWORD', 'Admin@12345') . env('APP_KEY'));
+        if ($token !== $valid) {
             return redirect('/admin/login');
         }
         return null;
+    }
+
+    public function showLogin()
+    {
+        $token = request()->cookie('admin_token');
+        $valid = hash('sha256', env('ADMIN_PASSWORD', 'Admin@12345') . env('APP_KEY'));
+        if ($token === $valid) return redirect('/admin/dashboard');
+        return view('admin.login');
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $adminEmail    = env('ADMIN_EMAIL', 'admin@homefix.app');
+        $adminPassword = env('ADMIN_PASSWORD', 'Admin@12345');
+
+        if ($request->email === $adminEmail && $request->password === $adminPassword) {
+            $token = hash('sha256', $adminPassword . env('APP_KEY'));
+            return redirect('/admin/dashboard')
+                ->withCookie(cookie()->forever('admin_token', $token));
+        }
+
+        return back()->withErrors(['email' => 'Invalid admin credentials.']);
+    }
+
+    public function logout()
+    {
+        return redirect('/admin/login')
+            ->withCookie(\Cookie::forget('admin_token'));
     }
 
     // DASHBOARD
@@ -42,48 +76,15 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('stats', 'recentBookings', 'recentUsers'));
     }
 
-    // LOGIN
-    public function showLogin()
-    {
-        if (session('admin_logged_in')) return redirect('/admin/dashboard');
-        return view('admin.login');
-    }
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
-
-        $adminEmail    = config('app.admin_email', env('ADMIN_EMAIL', 'admin@homefix.app'));
-        $adminPassword = env('ADMIN_PASSWORD', 'Admin@12345');
-
-        if ($request->email === $adminEmail && $request->password === $adminPassword) {
-            session(['admin_logged_in' => true, 'admin_email' => $request->email]);
-            return redirect('/admin/dashboard');
-        }
-
-        return back()->withErrors(['email' => 'Invalid admin credentials.']);
-    }
-
-    public function logout()
-    {
-        session()->forget(['admin_logged_in', 'admin_email']);
-        return redirect('/admin/login');
-    }
-
     // BOOKINGS
     public function bookings(Request $request)
     {
         if ($r = $this->guard()) return $r;
 
         $query = Booking::with(['user', 'professional'])->latest();
-
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-
         $bookings = $query->paginate(15);
         return view('admin.bookings', compact('bookings'));
     }
@@ -91,9 +92,7 @@ class AdminController extends Controller
     public function updateBooking(Request $request, $id)
     {
         if ($r = $this->guard()) return $r;
-
-        $booking = Booking::findOrFail($id);
-        $booking->update(['status' => $request->status]);
+        Booking::findOrFail($id)->update(['status' => $request->status]);
         return back()->with('success', 'Booking status updated.');
     }
 
@@ -104,10 +103,11 @@ class AdminController extends Controller
 
         $query = User::latest();
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%'.$request->search.'%')
-                  ->orWhere('email', 'like', '%'.$request->search.'%');
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
         }
-
         $users = $query->paginate(15);
         return view('admin.users', compact('users'));
     }
@@ -141,23 +141,46 @@ class AdminController extends Controller
             'hourly_rate' => 'nullable|numeric',
             'location'    => 'nullable|string',
             'bio'         => 'nullable|string',
+            'photo'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
+        if ($request->hasFile('photo')) {
+            $data['avatar_url'] = $this->uploadPhoto($request->file('photo'));
+        }
+
         $data['is_active'] = true;
+        unset($data['photo']);
         Professional::create($data);
-        return back()->with('success', 'Professional added.');
+        return back()->with('success', 'Professional added successfully.');
     }
 
     public function updateProfessional(Request $request, $id)
     {
         if ($r = $this->guard()) return $r;
 
-        $pro = Professional::findOrFail($id);
-        $pro->update($request->only([
-            'first_name','last_name','specialty','badge',
-            'rating','jobs_count','hourly_rate','location','bio','is_active'
-        ]));
-        return back()->with('success', 'Professional updated.');
+        $pro  = Professional::findOrFail($id);
+        $data = $request->validate([
+            'first_name'  => 'required|string|max:255',
+            'last_name'   => 'required|string|max:255',
+            'specialty'   => 'required|string|max:255',
+            'badge'       => 'required|in:ELITE,TOP PRO,VERIFIED',
+            'rating'      => 'required|numeric|min:0|max:5',
+            'jobs_count'  => 'required|integer|min:0',
+            'hourly_rate' => 'nullable|numeric',
+            'location'    => 'nullable|string',
+            'bio'         => 'nullable|string',
+            'is_active'   => 'nullable',
+            'photo'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $data['avatar_url'] = $this->uploadPhoto($request->file('photo'));
+        }
+
+        $data['is_active'] = $request->has('is_active') ? (bool)$request->is_active : $pro->is_active;
+        unset($data['photo']);
+        $pro->update($data);
+        return back()->with('success', 'Professional updated successfully.');
     }
 
     public function deleteProfessional($id)
@@ -187,5 +210,38 @@ class AdminController extends Controller
         if ($r = $this->guard()) return $r;
         Testimonial::findOrFail($id)->delete();
         return back()->with('success', 'Testimonial deleted.');
+    }
+
+    private function uploadPhoto($file): string
+    {
+        $mime      = $file->getMimeType();
+        $imageData = file_get_contents($file->getRealPath());
+
+        if (extension_loaded('gd')) {
+            $src = imagecreatefromstring($imageData);
+            if ($src) {
+                $origW   = imagesx($src);
+                $origH   = imagesy($src);
+                $maxSize = 300;
+
+                if ($origW > $maxSize || $origH > $maxSize) {
+                    $ratio = min($maxSize / $origW, $maxSize / $origH);
+                    $newW  = (int)($origW * $ratio);
+                    $newH  = (int)($origH * $ratio);
+                    $dst   = imagecreatetruecolor($newW, $newH);
+                    imagecopyresampled($dst, $src, 0, 0, 0, 0, $newW, $newH, $origW, $origH);
+
+                    ob_start();
+                    imagejpeg($dst, null, 75);
+                    $imageData = ob_get_clean();
+                    $mime      = 'image/jpeg';
+
+                    imagedestroy($src);
+                    imagedestroy($dst);
+                }
+            }
+        }
+
+        return 'data:' . $mime . ';base64,' . base64_encode($imageData);
     }
 }
