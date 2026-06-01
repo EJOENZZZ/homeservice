@@ -38,13 +38,16 @@ class AdminController extends Controller
         $adminEmail    = env('ADMIN_EMAIL', 'admin@homefix.app');
         $adminPassword = env('ADMIN_PASSWORD', 'Admin@12345');
 
-        if ($request->email === $adminEmail && $request->password === $adminPassword) {
-            $token = hash('sha256', $adminPassword . env('APP_KEY'));
-            return redirect('/admin/dashboard')
-                ->withCookie(cookie()->forever('admin_token', $token));
+        // DEBUG
+        if ($request->email !== $adminEmail || $request->password !== $adminPassword) {
+            return back()->withErrors([
+                'email' => 'DEBUG — input email: [' . $request->email . '] expected: [' . $adminEmail . '] | input pass: [' . $request->password . '] expected: [' . $adminPassword . ']'
+            ]);
         }
 
-        return back()->withErrors(['email' => 'Invalid admin credentials.']);
+        $token = hash('sha256', $adminPassword . env('APP_KEY'));
+        return redirect('/admin/dashboard')
+            ->withCookie(cookie()->forever('admin_token', $token));
     }
 
     public function logout()
