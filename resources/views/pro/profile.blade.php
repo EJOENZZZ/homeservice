@@ -213,28 +213,7 @@
             </form>
         </div>
 
-        {{-- CHANGE PASSWORD --}}
-        <div class="section">
-            <div class="section-title">Change Password</div>
-            <form method="POST" action="/pro/profile/password">
-                @csrf
-                <div class="form-group">
-                    <label>Current Password</label>
-                    <input type="password" name="current_password" placeholder="••••••••" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>New Password</label>
-                        <input type="password" name="password" placeholder="Min. 8 characters" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Confirm New Password</label>
-                        <input type="password" name="password_confirmation" placeholder="••••••••" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-ghost">Change Password</button>
-            </form>
-        </div>
+
     </div>
 </div>
 
