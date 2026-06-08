@@ -12,7 +12,7 @@ class HomeController extends Controller
         try {
             $professionals = Professional::where('is_active', true)
                 ->orderByDesc('rating')
-                ->limit(4)
+                ->limit(2)
                 ->get();
 
             $testimonials = Testimonial::where('is_approved', true)

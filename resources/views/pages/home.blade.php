@@ -46,7 +46,13 @@
         @forelse($professionals ?? [] as $pro)
         <div class="pro-card">
             <span class="pro-badge {{ strtolower(str_replace(' ','',$pro->badge)) }}">{{ $pro->badge }}</span>
-            <div class="pro-avatar">{{ strtoupper(substr($pro->first_name,0,1).substr($pro->last_name,0,1)) }}</div>
+            <div class="pro-avatar" style="padding:0;overflow:hidden">
+                @if($pro->avatar_url)
+                    <img src="{{ $pro->avatar_url }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+                @else
+                    {{ $pro->initials }}
+                @endif
+            </div>
             <h3 class="pro-name">{{ $pro->first_name }} {{ $pro->last_name }}</h3>
             <p class="pro-specialty">{{ $pro->specialty }}</p>
             <div class="pro-rating">
@@ -61,8 +67,6 @@
         @foreach([
             ['GD','Grace Dela Cruz','Plumber','ELITE','elite',5.00,451],
             ['MR','Marco Reyes','Electrician','TOP PRO','toppro',4.98,312],
-            ['AS','Ana Santos','Carpenter','VERIFIED','verified',4.97,284],
-            ['LB','Luis Bautista','Cleaner','TOP PRO','toppro',4.95,198],
         ] as $d)
         <div class="pro-card">
             <span class="pro-badge {{ $d[4] }}">{{ $d[3] }}</span>

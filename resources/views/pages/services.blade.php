@@ -19,7 +19,11 @@
         <div class="pro-list-card">
             <div class="pro-list-left">
                 <div class="pro-list-avatar">
-                    {{ strtoupper(substr($pro->first_name,0,1).substr($pro->last_name,0,1)) }}
+                    @if($pro->avatar_url)
+                        <img src="{{ $pro->avatar_url }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+                    @else
+                        {{ strtoupper(substr($pro->first_name,0,1).substr($pro->last_name,0,1)) }}
+                    @endif
                 </div>
             </div>
             <div class="pro-list-body">
@@ -102,7 +106,7 @@
     width: 72px; height: 72px; background: var(--blue-light);
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
     font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem;
-    color: var(--blue); flex-shrink: 0;
+    color: var(--blue); flex-shrink: 0; overflow: hidden;
 }
 .pro-list-body { flex: 1; min-width: 0; }
 .pro-list-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }

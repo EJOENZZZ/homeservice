@@ -16,7 +16,11 @@
         <aside class="pro-sidebar">
             <div class="pro-sidebar-card">
                 <div class="pro-profile-avatar">
-                    {{ strtoupper(substr($pro->first_name,0,1).substr($pro->last_name,0,1)) }}
+                    @if($pro->avatar_url)
+                        <img src="{{ $pro->avatar_url }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+                    @else
+                        {{ $pro->initials }}
+                    @endif
                 </div>
                 <span class="pro-badge-inline {{ strtolower(str_replace(' ','',$pro->badge)) }}">{{ $pro->badge }}</span>
                 <h1 class="pro-profile-name">{{ $pro->first_name }} {{ $pro->last_name }}</h1>
@@ -149,7 +153,7 @@
     border-radius: 50%; margin: 0 auto 14px;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: 1.5rem; color: var(--blue);
+    font-size: 1.5rem; color: var(--blue); overflow: hidden;
 }
 .pro-profile-name {
     font-family: 'Syne', sans-serif; font-weight: 800;
