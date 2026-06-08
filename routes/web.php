@@ -90,3 +90,14 @@ Route::post('/admin/testimonials/{id}/approve',  [AdminController::class, 'appro
 Route::delete('/admin/testimonials/{id}',        [AdminController::class, 'deleteTestimonial'])->name('admin.testimonials.delete');
 Route::get('/admin/messages',                    [AdminController::class, 'messages'])->name('admin.messages');
 
+// ── TEMP SEED (delete after use) ──────────────────────
+Route::get('/run-seed-hf2026', function () {
+    if (request('key') !== 'homefix-seed-2026') abort(403);
+    try {
+        \Artisan::call('db:seed', ['--force' => true]);
+        return 'Seeded OK: ' . \Artisan::output();
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
