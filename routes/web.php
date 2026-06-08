@@ -61,6 +61,14 @@ Route::get('/pro/messages',               [MessageController::class, 'proIndex']
 Route::get('/pro/messages/{convId}',      [MessageController::class, 'proChat'])->name('pro.messages.chat');
 Route::post('/pro/messages/{convId}/send',[MessageController::class, 'proSend'])->name('pro.messages.send');
 
+// ── SUPERADMIN (Professionals) ─────────────────────
+Route::get('/superadmin',        fn() => redirect('/superadmin/login'));
+Route::get('/superadmin/login',  function () {
+    if (session('pro_id')) return redirect('/pro/dashboard');
+    return view('superadmin.login');
+})->name('superadmin.login');
+Route::post('/superadmin/login', [ProAuthController::class, 'login'])->name('superadmin.login.post');
+
 // ── ADMIN ────────────────────────────────────────────
 Route::get('/admin',                             fn() => redirect('/admin/dashboard'));
 Route::get('/admin/login',                       [AdminController::class, 'showLogin'])->name('admin.login');
