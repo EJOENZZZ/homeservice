@@ -150,50 +150,8 @@
         </div>
 
         <div class="grid2">
-            {{-- RECENT BOOKINGS --}}
-            <div class="card" style="grid-column:1/-1">
-                <div class="card-title">
-                    Recent Bookings
-                    <a href="/pro/bookings" class="btn btn-ghost" style="font-size:.75rem">View All →</a>
-                </div>
-                @if($recentBookings->isEmpty())
-                <div class="empty">No bookings yet.</div>
-                @else
-                <table>
-                    <thead>
-                        <tr><th>Customer</th><th>Date</th><th>Address</th><th>Status</th><th>Update</th></tr>
-                    </thead>
-                    <tbody>
-                        @foreach($recentBookings as $b)
-                        <tr>
-                            <td>
-                                <div style="font-weight:600">{{ $b->user->name ?? '—' }}</div>
-                                <div style="font-size:.75rem;color:var(--muted)">{{ $b->user->email ?? '' }}</div>
-                            </td>
-                            <td>{{ \Carbon\Carbon::parse($b->service_date)->format('M j') }}<br>
-                                <span style="font-size:.75rem;color:var(--muted)">{{ \Carbon\Carbon::parse($b->service_time)->format('g:i A') }}</span>
-                            </td>
-                            <td style="font-size:.8rem;color:#94A3B8;max-width:140px">{{ $b->address }}</td>
-                            <td><span class="badge badge-{{ $b->status }}">{{ ucfirst($b->status) }}</span></td>
-                            <td>
-                                <form method="POST" action="/pro/bookings/{{ $b->id }}">
-                                    @csrf
-                                    <select name="status" class="status-select" onchange="this.form.submit()">
-                                        @foreach(['pending','confirmed','completed','cancelled'] as $s)
-                                        <option value="{{ $s }}" {{ $b->status===$s?'selected':'' }}>{{ ucfirst($s) }}</option>
-                                        @endforeach
-                                    </select>
-                                </form>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                @endif
-            </div>
-
             {{-- NOTIFICATIONS --}}
-            <div class="card">
+            <div class="card" style="grid-column:1/-1">
                 <div class="card-title">Notifications</div>
                 @if($notifications->isEmpty())
                 <div class="empty">No new notifications.</div>
@@ -210,21 +168,6 @@
                 </div>
                 @endforeach
                 @endif
-            </div>
-
-            {{-- QUICK LINKS --}}
-            <div class="card">
-                <div class="card-title">Quick Actions</div>
-                <div style="display:flex;flex-direction:column;gap:10px">
-                    <a href="/pro/messages" class="btn btn-blue" style="justify-content:center;padding:12px">
-                        💬 View Messages
-                        @if($unreadMessages > 0)
-                        <span style="background:rgba(255,255,255,.2);padding:1px 8px;border-radius:20px;font-size:.75rem">{{ $unreadMessages }} new</span>
-                        @endif
-                    </a>
-                    <a href="/pro/bookings" class="btn btn-ghost" style="justify-content:center;padding:12px">📅 Manage Bookings</a>
-                    <a href="/pro/profile" class="btn btn-ghost" style="justify-content:center;padding:12px">👤 Edit Profile</a>
-                </div>
             </div>
         </div>
     </div>
