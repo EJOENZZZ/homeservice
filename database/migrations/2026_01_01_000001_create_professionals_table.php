@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true);
             $table->decimal('hourly_rate', 8, 2)->nullable();
             $table->string('location')->nullable();
-            $table->string('avatar')->nullable();
+            $table->text('avatar')->nullable();
             $table->string('email')->unique()->nullable();
             $table->string('password')->nullable();
             $table->boolean('is_verified')->default(false);

@@ -107,7 +107,11 @@
         <div class="alert-success">✓ {{ session('success') }}</div>
         @endif
         @if($errors->any())
-        <div class="alert-error">{{ $errors->first() }}</div>
+        <div class="alert-error">
+            @foreach($errors->all() as $e)
+                <div>✕ {{ $e }}</div>
+            @endforeach
+        </div>
         @endif
 
         {{-- ACCOUNT INFO --}}
@@ -168,45 +172,45 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>First Name</label>
-                        <input type="text" name="first_name" value="{{ $pro->first_name }}" required>
+                        <input type="text" name="first_name" value="{{ old('first_name', $pro->first_name) }}" required>
                     </div>
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" name="last_name" value="{{ $pro->last_name }}" required>
+                        <input type="text" name="last_name" value="{{ old('last_name', $pro->last_name) }}" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Phone</label>
-                        <input type="text" name="phone" value="{{ $pro->phone }}" placeholder="+63 9XX XXX XXXX">
+                        <input type="text" name="phone" value="{{ old('phone', $pro->phone) }}" placeholder="+63 9XX XXX XXXX">
                     </div>
                     <div class="form-group">
                         <label>Location</label>
-                        <input type="text" name="location" value="{{ $pro->location }}" placeholder="e.g. Cebu City">
+                        <input type="text" name="location" value="{{ old('location', $pro->location) }}" placeholder="e.g. Cebu City">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Hourly Rate (₱)</label>
-                        <input type="number" name="hourly_rate" value="{{ $pro->hourly_rate }}" step="0.01" placeholder="0.00">
+                        <input type="number" name="hourly_rate" value="{{ old('hourly_rate', $pro->hourly_rate) }}" step="0.01" placeholder="0.00">
                     </div>
                     <div class="form-group">
                         <label>Years of Experience</label>
-                        <input type="number" name="years_experience" value="{{ $pro->years_experience }}" min="0" placeholder="0">
+                        <input type="number" name="years_experience" value="{{ old('years_experience', $pro->years_experience) }}" min="0" placeholder="0">
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Bio / About Me</label>
-                    <textarea name="bio" placeholder="Tell clients about yourself...">{{ $pro->bio }}</textarea>
+                    <textarea name="bio" placeholder="Tell clients about yourself...">{{ old('bio', $pro->bio) }}</textarea>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Facebook URL</label>
-                        <input type="url" name="facebook" value="{{ $pro->facebook }}" placeholder="https://facebook.com/...">
+                        <input type="url" name="facebook" value="{{ old('facebook', $pro->facebook) }}" placeholder="https://facebook.com/...">
                     </div>
                     <div class="form-group">
                         <label>Instagram URL</label>
-                        <input type="url" name="instagram" value="{{ $pro->instagram }}" placeholder="https://instagram.com/...">
+                        <input type="url" name="instagram" value="{{ old('instagram', $pro->instagram) }}" placeholder="https://instagram.com/...">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-blue">Save Changes</button>

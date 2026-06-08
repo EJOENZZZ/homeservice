@@ -63,8 +63,14 @@
 
         {{-- RIGHT CONTENT --}}
         <div>
+            {{-- TABS --}}
+            <div style="display:flex;gap:0;margin-bottom:20px;background:#fff;border:1.5px solid var(--gray-border);border-radius:14px;padding:5px;">
+                <button onclick="showTab('edit-profile')" id="tab-edit" style="flex:1;padding:10px;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;background:var(--blue);color:#fff;transition:all .2s">Edit Profile</button>
+                <button onclick="showTab('change-password')" id="tab-password" style="flex:1;padding:10px;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;background:transparent;color:var(--gray-mid);transition:all .2s">Change Password</button>
+            </div>
+
             {{-- EDIT PROFILE --}}
-            <div style="background:#fff;border:1.5px solid var(--gray-border);border-radius:20px;padding:28px;margin-bottom:20px">
+            <div id="edit-profile" style="background:#fff;border:1.5px solid var(--gray-border);border-radius:20px;padding:28px;margin-bottom:20px">
                 <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--gray-border)">
                     Edit Profile
                 </h2>
@@ -106,7 +112,7 @@
             </div>
 
             {{-- CHANGE PASSWORD --}}
-            <div style="background:#fff;border:1.5px solid var(--gray-border);border-radius:20px;padding:28px;margin-bottom:20px">
+            <div id="change-password" style="display:none;background:#fff;border:1.5px solid var(--gray-border);border-radius:20px;padding:28px;margin-bottom:20px">
                 <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--gray-border)">
                     Change Password
                 </h2>
@@ -128,42 +134,25 @@
                 </form>
             </div>
 
-            {{-- RECENT BOOKINGS --}}
-            <div style="background:#fff;border:1.5px solid var(--gray-border);border-radius:20px;padding:28px">
-                <h2 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--gray-border)">
-                    Recent Bookings
-                </h2>
-                @forelse($bookings as $b)
-                <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--gray-border)">
-                    <div style="width:44px;height:44px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--blue);overflow:hidden;flex-shrink:0">
-                        @if($b->professional && $b->professional->avatar_url)
-                            <img src="{{ $b->professional->avatar_url }}" style="width:100%;height:100%;object-fit:cover">
-                        @else
-                            {{ $b->professional ? $b->professional->initials : '?' }}
-                        @endif
-                    </div>
-                    <div style="flex:1">
-                        <div style="font-weight:600;font-size:.9rem">{{ $b->professional ? $b->professional->full_name : 'Unknown' }}</div>
-                        <div style="font-size:.78rem;color:var(--gray-mid)">{{ $b->professional->specialty ?? '' }} · {{ \Carbon\Carbon::parse($b->service_date)->format('M j, Y') }}</div>
-                    </div>
-                    <span style="padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;background:{{ $b->status==='completed'?'#ECFDF5':($b->status==='pending'?'#FEF3C7':'#EFF6FF') }};color:{{ $b->status==='completed'?'#059669':($b->status==='pending'?'#D97706':'#2563EB') }}">
-                        {{ ucfirst($b->status) }}
-                    </span>
-                </div>
-                @empty
-                <div style="text-align:center;color:var(--gray-mid);padding:24px;font-size:.88rem">No bookings yet.</div>
-                @endforelse
-                @if($bookings->count() >= 5)
-                <div style="margin-top:16px;text-align:center">
-                    <a href="/my-bookings" class="btn-outline" style="font-size:.85rem">View All Bookings</a>
-                </div>
-                @endif
-            </div>
         </div>
     </div>
 </div>
 
 <script>
+function showTab(tab) {
+    document.getElementById('edit-profile').style.display = tab === 'edit-profile' ? 'block' : 'none';
+    document.getElementById('change-password').style.display = tab === 'change-password' ? 'block' : 'none';
+    document.getElementById('tab-edit').style.background = tab === 'edit-profile' ? 'var(--blue)' : 'transparent';
+    document.getElementById('tab-edit').style.color = tab === 'edit-profile' ? '#fff' : 'var(--gray-mid)';
+    document.getElementById('tab-password').style.background = tab === 'change-password' ? 'var(--blue)' : 'transparent';
+    document.getElementById('tab-password').style.color = tab === 'change-password' ? '#fff' : 'var(--gray-mid)';
+}
+
+// Auto-open change password tab if there are password errors
+@if($errors->has('current_password') || $errors->has('password'))
+document.addEventListener('DOMContentLoaded', () => showTab('change-password'));
+@endif
+
 function previewUserAvatar(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();

@@ -10,9 +10,8 @@ class UserProfileController extends Controller
 {
     public function show()
     {
-        $user     = Auth::user();
-        $bookings = $user->bookings()->with('professional')->latest()->limit(5)->get();
-        return view('pages.profile', compact('user', 'bookings'));
+        $user = Auth::user();
+        return view('pages.profile', compact('user'));
     }
 
     public function update(Request $request)
