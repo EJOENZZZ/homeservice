@@ -122,7 +122,7 @@ class ProDashboardController extends Controller
                     }
                 }
             }
-            $data['avatar_url'] = 'data:' . $mime . ';base64,' . base64_encode($imageData);
+            $data['avatar'] = 'data:' . $mime . ';base64,' . base64_encode($imageData);
         }
 
         unset($data['photo']);
