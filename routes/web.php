@@ -18,7 +18,7 @@ Route::get('/services',     [ServiceController::class, 'index'])->name('services
 Route::get('/how-it-works', fn() => view('pages.how-it-works'))->name('how-it-works');
 Route::get('/contact',  [\App\Http\Controllers\ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
-Route::post('/testimonials', [\App\Http\Controllers\TestimonialController::class, 'store'])->name('testimonials.store');
+Route::post('/testimonials', [\App\Http\Controllers\TestimonialController::class, 'store'])->name('testimonials.store')->middleware('auth');
 Route::get('/pros/{id}',    [ProfessionalController::class, 'show'])->name('pro.show');
 
 // ── USER AUTH ────────────────────────────────────────

@@ -115,15 +115,9 @@
         </div>
         @endif
 
+        @auth
         <form method="POST" action="/testimonials">
             @csrf
-            <div style="margin-bottom:16px">
-                <label style="display:block;font-size:.82rem;font-weight:600;color:#374151;margin-bottom:6px">Your Name</label>
-                <input type="text" name="author_name" value="{{ auth()->check() ? Auth::user()->name : old('author_name') }}" placeholder="Juan dela Cruz" required
-                    style="width:100%;border:1.5px solid var(--gray-border);border-radius:10px;padding:10px 14px;font-size:.9rem;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s"
-                    onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-border)'">
-            </div>
-
             <div style="margin-bottom:16px">
                 <label style="display:block;font-size:.82rem;font-weight:600;color:#374151;margin-bottom:8px">Rating</label>
                 <div style="display:flex;gap:6px" id="star-rating">
@@ -134,16 +128,20 @@
                 </div>
                 <input type="hidden" name="rating" id="rating-input" value="5">
             </div>
-
             <div style="margin-bottom:22px">
                 <label style="display:block;font-size:.82rem;font-weight:600;color:#374151;margin-bottom:6px">Your Review</label>
                 <textarea name="content" rows="4" placeholder="Tell others about your experience..." required
                     style="width:100%;border:1.5px solid var(--gray-border);border-radius:10px;padding:10px 14px;font-size:.9rem;outline:none;resize:vertical;font-family:'DM Sans',sans-serif;transition:border-color .2s"
                     onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-border)'">{{{ old('content') }}}</textarea>
             </div>
-
             <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Submit Review</button>
         </form>
+        @else
+        <div style="text-align:center;padding:16px 0">
+            <p style="color:var(--gray-mid);font-size:.9rem;margin-bottom:16px">You need to be logged in to leave a review.</p>
+            <a href="/login" class="btn-primary" style="display:inline-flex">Log In to Review</a>
+        </div>
+        @endauth
     </div>
 </section>
 

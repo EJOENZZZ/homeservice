@@ -10,13 +10,12 @@ class TestimonialController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'author_name' => 'required|string|max:100',
-            'content'     => 'required|string|max:1000',
-            'rating'      => 'required|integer|min:1|max:5',
+            'content' => 'required|string|max:1000',
+            'rating'  => 'required|integer|min:1|max:5',
         ]);
 
         Testimonial::create([
-            'author_name' => $request->author_name,
+            'author_name' => auth()->user()->name,
             'content'     => $request->content,
             'rating'      => $request->rating,
             'is_approved' => false,
