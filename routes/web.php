@@ -101,3 +101,8 @@ Route::get('/run-seed-hf2026', function () {
     }
 });
 
+Route::get('/check-pros-hf2026', function () {
+    if (request('key') !== 'homefix-seed-2026') abort(403);
+    return \App\Models\Professional::select('id','first_name','email','password','is_verified','is_active')->get();
+});
+
