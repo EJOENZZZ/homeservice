@@ -102,6 +102,64 @@
         </div>
         @endforelse
     </div>
+
+    {{-- LEAVE A REVIEW FORM --}}
+    <div style="max-width:560px;margin:48px auto 0;background:#fff;border:1.5px solid var(--gray-border);border-radius:20px;padding:36px">
+        <h3 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;margin-bottom:6px;text-align:center">Leave a Review</h3>
+        <p style="text-align:center;color:var(--gray-mid);font-size:.88rem;margin-bottom:24px">Share your experience with HomeFix</p>
+
+        @if(session('review_success'))
+        <div style="background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:.88rem;display:flex;align-items:center;gap:8px">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#059669" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{ session('review_success') }}
+        </div>
+        @endif
+
+        <form method="POST" action="/testimonials">
+            @csrf
+            <div style="margin-bottom:16px">
+                <label style="display:block;font-size:.82rem;font-weight:600;color:#374151;margin-bottom:6px">Your Name</label>
+                <input type="text" name="author_name" value="{{ auth()->check() ? Auth::user()->name : old('author_name') }}" placeholder="Juan dela Cruz" required
+                    style="width:100%;border:1.5px solid var(--gray-border);border-radius:10px;padding:10px 14px;font-size:.9rem;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s"
+                    onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-border)'">
+            </div>
+
+            <div style="margin-bottom:16px">
+                <label style="display:block;font-size:.82rem;font-weight:600;color:#374151;margin-bottom:8px">Rating</label>
+                <div style="display:flex;gap:6px" id="star-rating">
+                    @for($i = 1; $i <= 5; $i++)
+                    <label style="cursor:pointer;font-size:1.6rem;color:#D1D5DB;transition:color .15s" id="star-{{ $i }}"
+                        onmouseover="hoverStars({{ $i }})" onmouseout="resetStars()" onclick="selectStar({{ $i }})">★</label>
+                    @endfor
+                </div>
+                <input type="hidden" name="rating" id="rating-input" value="5">
+            </div>
+
+            <div style="margin-bottom:22px">
+                <label style="display:block;font-size:.82rem;font-weight:600;color:#374151;margin-bottom:6px">Your Review</label>
+                <textarea name="content" rows="4" placeholder="Tell others about your experience..." required
+                    style="width:100%;border:1.5px solid var(--gray-border);border-radius:10px;padding:10px 14px;font-size:.9rem;outline:none;resize:vertical;font-family:'DM Sans',sans-serif;transition:border-color .2s"
+                    onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--gray-border)'">{{{ old('content') }}}</textarea>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Submit Review</button>
+        </form>
+    </div>
 </section>
+
+<script>
+let selectedRating = 5;
+document.addEventListener('DOMContentLoaded', () => selectStar(5));
+function hoverStars(n) {
+    for (let i = 1; i <= 5; i++)
+        document.getElementById('star-' + i).style.color = i <= n ? '#F59E0B' : '#D1D5DB';
+}
+function resetStars() { selectStar(selectedRating, true); }
+function selectStar(n, silent) {
+    if (!silent) { selectedRating = n; document.getElementById('rating-input').value = n; }
+    for (let i = 1; i <= 5; i++)
+        document.getElementById('star-' + i).style.color = i <= n ? '#F59E0B' : '#D1D5DB';
+}
+</script>
 
 @endsection

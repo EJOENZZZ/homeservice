@@ -19,7 +19,7 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
 
             {{-- PHONE --}}
-            <a href="tel:+639123456789" style="text-decoration:none">
+            <a href="tel:+639562779244" style="text-decoration:none">
                 <div style="background:#fff;border:1.5px solid #E5E7EB;border-radius:18px;padding:28px 24px;text-align:center;transition:all .2s;cursor:pointer"
                     onmouseover="this.style.borderColor='#2563EB';this.style.boxShadow='0 4px 20px rgba(37,99,235,.1)'"
                     onmouseout="this.style.borderColor='#E5E7EB';this.style.boxShadow='none'">
@@ -27,22 +27,22 @@
                         <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#2563EB" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
                     </div>
                     <div style="font-size:.75rem;font-weight:700;letter-spacing:.08em;color:#9CA3AF;margin-bottom:6px">PHONE</div>
-                    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:#111827">+63 912 345 6789</div>
+                    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:#111827">+63 956 277 9244</div>
                     <div style="font-size:.8rem;color:#6B7280;margin-top:4px">Mon – Sat, 8AM – 6PM</div>
                 </div>
             </a>
 
             {{-- EMAIL --}}
-            <a href="mailto:admin@homefix.app" style="text-decoration:none">
+            <a href="https://m.me/homefix" target="_blank" style="text-decoration:none">
                 <div style="background:#fff;border:1.5px solid #E5E7EB;border-radius:18px;padding:28px 24px;text-align:center;transition:all .2s;cursor:pointer"
                     onmouseover="this.style.borderColor='#2563EB';this.style.boxShadow='0 4px 20px rgba(37,99,235,.1)'"
                     onmouseout="this.style.borderColor='#E5E7EB';this.style.boxShadow='none'">
                     <div style="width:48px;height:48px;background:#EFF6FF;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
-                        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#2563EB" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5H4.5a2.25 2.25 0 00-2.25 2.25m19.5 0L12 13.5 2.25 6.75"/></svg>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#2563EB"><path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.908 1.438 5.504 3.687 7.205V22l3.37-1.85c.9.249 1.853.384 2.843.384 5.523 0 10-4.145 10-9.243S17.523 2 12 2zm1.007 12.435l-2.547-2.715-4.97 2.715 5.467-5.804 2.611 2.715 4.906-2.715-5.467 5.804z"/></svg>
                     </div>
-                    <div style="font-size:.75rem;font-weight:700;letter-spacing:.08em;color:#9CA3AF;margin-bottom:6px">EMAIL</div>
-                    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:#111827">admin@homefix.app</div>
-                    <div style="font-size:.8rem;color:#6B7280;margin-top:4px">We reply within 24 hours</div>
+                    <div style="font-size:.75rem;font-weight:700;letter-spacing:.08em;color:#9CA3AF;margin-bottom:6px">MESSAGE US</div>
+                    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:#111827">Facebook Messenger</div>
+                    <div style="font-size:.8rem;color:#6B7280;margin-top:4px">Click to message us directly</div>
                 </div>
             </a>
 
@@ -77,16 +77,7 @@
 
         </div>
 
-        {{-- BOTTOM NOTE --}}
-        <div style="background:#fff;border:1.5px solid #E5E7EB;border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:14px">
-            <div style="width:40px;height:40px;background:#FEF3C7;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#D97706" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
-            </div>
-            <p style="font-size:.88rem;color:#6B7280;line-height:1.6;margin:0">
-                For booking-related concerns, you can also message your professional directly through the
-                <a href="/messages" style="color:#2563EB;font-weight:600;text-decoration:none">Messages</a> section after logging in.
-            </p>
-        </div>
+
 
     </div>
 </div>
