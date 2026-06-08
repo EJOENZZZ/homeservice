@@ -55,9 +55,6 @@
                 <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--gray-border)">
                     <a href="/my-bookings" class="btn-outline" style="display:block;text-align:center;font-size:.85rem">View All Bookings</a>
                 </div>
-                <div style="margin-top:8px">
-                    <a href="/messages" class="btn-primary" style="display:flex;justify-content:center;font-size:.85rem;padding:9px">💬 My Messages</a>
-                </div>
             </div>
         </div>
 

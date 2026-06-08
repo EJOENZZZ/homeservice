@@ -287,6 +287,29 @@ class AdminController extends Controller
         return view('admin.messages', compact('conversations'));
     }
 
+    // CONTACT MESSAGES
+    public function contactMessages()
+    {
+        if ($r = $this->guard()) return $r;
+        $messages = \App\Models\ContactMessage::latest()->paginate(15);
+        $unread   = \App\Models\ContactMessage::where('is_read', false)->count();
+        return view('admin.contact-messages', compact('messages', 'unread'));
+    }
+
+    public function markContactRead($id)
+    {
+        if ($r = $this->guard()) return $r;
+        \App\Models\ContactMessage::findOrFail($id)->update(['is_read' => true]);
+        return response()->json(['ok' => true]);
+    }
+
+    public function deleteContact($id)
+    {
+        if ($r = $this->guard()) return $r;
+        \App\Models\ContactMessage::findOrFail($id)->delete();
+        return back()->with('success', 'Message deleted.');
+    }
+
     private function sendCredentials(string $email, string $name, string $password): void
     {
         Mail::html("

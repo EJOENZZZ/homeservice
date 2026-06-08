@@ -189,6 +189,11 @@
         <a href="/admin/testimonials" class="nav-item {{ request()->is('admin/testimonials*') ? 'active' : '' }}">
             <span class="nav-icon">⭐</span> Testimonials
         </a>
+        <a href="/admin/contact-messages" class="nav-item {{ request()->is('admin/contact-messages*') ? 'active' : '' }}">
+            <span class="nav-icon">✉️</span> Contact Messages
+            @php $unread = \App\Models\ContactMessage::where('is_read', false)->count(); @endphp
+            @if($unread > 0)<span style="margin-left:auto;background:#DC2626;color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px">{{ $unread }}</span>@endif
+        </a>
 
         <div class="nav-section">SITE</div>
         <a href="/" target="_blank" class="nav-item">

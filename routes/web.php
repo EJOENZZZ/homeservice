@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/services',     [ServiceController::class, 'index'])->name('services');
 Route::get('/how-it-works', fn() => view('pages.how-it-works'))->name('how-it-works');
+Route::get('/contact',  [\App\Http\Controllers\ContactController::class, 'show'])->name('contact');
+Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
 Route::get('/pros/{id}',    [ProfessionalController::class, 'show'])->name('pro.show');
 
 // ── USER AUTH ────────────────────────────────────────
@@ -89,6 +91,9 @@ Route::get('/admin/testimonials',                [AdminController::class, 'testi
 Route::post('/admin/testimonials/{id}/approve',  [AdminController::class, 'approveTestimonial'])->name('admin.testimonials.approve');
 Route::delete('/admin/testimonials/{id}',        [AdminController::class, 'deleteTestimonial'])->name('admin.testimonials.delete');
 Route::get('/admin/messages',                    [AdminController::class, 'messages'])->name('admin.messages');
+Route::get('/admin/contact-messages',            [AdminController::class, 'contactMessages'])->name('admin.contact-messages');
+Route::post('/admin/contact-messages/{id}/read', [AdminController::class, 'markContactRead'])->name('admin.contact-messages.read');
+Route::delete('/admin/contact-messages/{id}',   [AdminController::class, 'deleteContact'])->name('admin.contact-messages.delete');
 
 // ── TEMP SEED (delete after use) ──────────────────────
 Route::get('/run-seed-hf2026', function () {

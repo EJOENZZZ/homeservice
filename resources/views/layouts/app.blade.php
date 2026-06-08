@@ -21,7 +21,6 @@
         <ul class="nav-links" id="navLinks">
             <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Home</a></li>
             <li><a href="/services" class="{{ request()->is('services*') ? 'active' : '' }}">Services</a></li>
-            <li><a href="/contact" class="{{ request()->is('contact') ? 'active' : '' }}">Contact</a></li>
         </ul>
 
         <div class="nav-actions" id="navActions">
