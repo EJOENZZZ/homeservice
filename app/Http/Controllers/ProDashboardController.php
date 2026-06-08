@@ -7,10 +7,11 @@ use App\Models\Booking;
 use App\Models\Conversation;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class ProDashboardController extends Controller
 {
-    private function getPro()
+    private function getPro(): ?Professional
     {
         $id = session('pro_id');
         if (!$id) return null;
@@ -19,7 +20,9 @@ class ProDashboardController extends Controller
 
     private function guard()
     {
-        if (!session('pro_id')) return redirect('/pro/login');
+        $pro = $this->getPro();
+        if (!$pro) return redirect('/pro/login');
+        if ($pro->must_change_password) return redirect('/pro/change-password');
         return null;
     }
 
@@ -39,13 +42,12 @@ class ProDashboardController extends Controller
             ->with('user')->latest()->limit(5)->get();
 
         $unreadMessages = Conversation::where('professional_id', $pro->id)
-            ->with('latestMessage')
+            ->with('messages')
             ->get()
-            ->sum(fn($c) => $c->unreadCount('professional', $pro->id));
+            ->sum(fn($c) => $c->messages->where('is_read', false)->where('sender_type', '!=', 'professional')->count());
 
         $notifications = Notification::where('recipient_type', 'professional')
             ->where('recipient_id', $pro->id)
-            ->where('is_read', false)
             ->latest()->limit(5)->get();
 
         $pro->update(['last_seen_at' => now()]);
@@ -56,7 +58,7 @@ class ProDashboardController extends Controller
     public function bookings()
     {
         if ($r = $this->guard()) return $r;
-        $pro = $this->getPro();
+        $pro      = $this->getPro();
         $bookings = Booking::where('professional_id', $pro->id)
             ->with('user')->latest()->paginate(15);
         return view('pro.bookings', compact('pro', 'bookings'));
@@ -69,7 +71,6 @@ class ProDashboardController extends Controller
         $booking = Booking::where('id', $id)->where('professional_id', $pro->id)->firstOrFail();
         $booking->update(['status' => $request->status]);
 
-        // Notify user
         Notification::send('user', $booking->user_id, 'booking_' . $request->status,
             'Booking ' . ucfirst($request->status),
             'Your booking with ' . $pro->full_name . ' has been ' . $request->status . '.',
@@ -91,14 +92,59 @@ class ProDashboardController extends Controller
         if ($r = $this->guard()) return $r;
         $pro  = $this->getPro();
         $data = $request->validate([
-            'first_name'  => 'required|string|max:255',
-            'last_name'   => 'required|string|max:255',
-            'bio'         => 'nullable|string',
-            'hourly_rate' => 'nullable|numeric',
-            'location'    => 'nullable|string',
+            'first_name'       => 'required|string|max:255',
+            'last_name'        => 'required|string|max:255',
+            'phone'            => 'nullable|string|max:20',
+            'bio'              => 'nullable|string|max:1000',
+            'hourly_rate'      => 'nullable|numeric',
+            'location'         => 'nullable|string',
+            'years_experience' => 'nullable|integer|min:0',
+            'facebook'         => 'nullable|url',
+            'instagram'        => 'nullable|url',
+            'photo'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+            $file      = $request->file('photo');
+            $mime      = $file->getMimeType();
+            $imageData = file_get_contents($file->getRealPath());
+            if (extension_loaded('gd')) {
+                $src = imagecreatefromstring($imageData);
+                if ($src) {
+                    $origW = imagesx($src); $origH = imagesy($src); $max = 300;
+                    if ($origW > $max || $origH > $max) {
+                        $ratio = min($max/$origW, $max/$origH);
+                        $dst   = imagecreatetruecolor((int)($origW*$ratio), (int)($origH*$ratio));
+                        imagecopyresampled($dst, $src, 0, 0, 0, 0, (int)($origW*$ratio), (int)($origH*$ratio), $origW, $origH);
+                        ob_start(); imagejpeg($dst, null, 80); $imageData = ob_get_clean();
+                        $mime = 'image/jpeg';
+                        imagedestroy($src); imagedestroy($dst);
+                    }
+                }
+            }
+            $data['avatar_url'] = 'data:' . $mime . ';base64,' . base64_encode($imageData);
+        }
+
+        unset($data['photo']);
         $pro->update($data);
         session(['pro_name' => $pro->fresh()->full_name]);
-        return back()->with('success', 'Profile updated.');
+        return back()->with('success', 'Profile updated successfully.');
+    }
+
+    public function changePassword(Request $request)
+    {
+        if ($r = $this->guard()) return $r;
+        $request->validate([
+            'current_password' => 'required',
+            'password'         => 'required|min:8|confirmed',
+        ]);
+
+        $pro = $this->getPro();
+        if (!Hash::check($request->current_password, $pro->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        $pro->update(['password' => Hash::make($request->password)]);
+        return back()->with('success', 'Password changed successfully.');
     }
 }

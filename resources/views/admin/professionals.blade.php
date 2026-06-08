@@ -29,13 +29,27 @@
                             {{ $pro->is_active ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <td style="display:flex;gap:6px;flex-wrap:wrap">
-                        <button class="btn btn-amber" onclick="openEdit({{ $pro }})">Edit</button>
-                        <form method="POST" action="/admin/professionals/{{ $pro->id }}" onsubmit="return confirm('Delete?')">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-red">Delete</button>
-                        </form>
-                    </td>
+                    <td>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-amber" onclick="openEdit({{ $pro->toJson() }})">Edit</button>
+        <form method="POST" action="/admin/professionals/{{ $pro->id }}/reset"
+            onsubmit="return confirm('Reset password for {{ $pro->first_name }}? New credentials will be emailed.')">
+            @csrf
+            <button type="submit" class="btn btn-blue" style="font-size:.75rem">Reset Pass</button>
+        </form>
+        <form method="POST" action="/admin/professionals/{{ $pro->id }}/toggle">
+            @csrf
+            <button type="submit" class="btn {{ $pro->is_active ? 'btn-amber' : 'btn-green' }}" style="font-size:.75rem">
+                {{ $pro->is_active ? 'Deactivate' : 'Activate' }}
+            </button>
+        </form>
+        <form method="POST" action="/admin/professionals/{{ $pro->id }}"
+            onsubmit="return confirm('Delete {{ $pro->first_name }}?')">
+            @csrf @method('DELETE')
+            <button type="submit" class="btn btn-red">Delete</button>
+        </form>
+    </div>
+</td>
                 </tr>
                 @empty
                 <tr><td colspan="7" style="text-align:center;color:#9CA3AF;padding:40px">No professionals yet.</td></tr>

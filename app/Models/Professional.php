@@ -14,7 +14,9 @@ class Professional extends Authenticatable
         'badge', 'rating', 'jobs_count', 'bio', 'is_active',
         'hourly_rate', 'location', 'avatar', 'avatar_url',
         'email', 'password', 'is_verified',
-        'verification_code', 'verification_expires_at', 'last_seen_at',
+        'verification_code', 'verification_expires_at',
+        'last_seen_at', 'must_change_password',
+        'phone', 'years_experience', 'facebook', 'instagram',
     ];
 
     protected $hidden = ['password', 'verification_code'];
@@ -23,6 +25,7 @@ class Professional extends Authenticatable
         'rating'                  => 'float',
         'is_active'               => 'boolean',
         'is_verified'             => 'boolean',
+        'must_change_password'    => 'boolean',
         'jobs_count'              => 'integer',
         'verification_expires_at' => 'datetime',
         'last_seen_at'            => 'datetime',

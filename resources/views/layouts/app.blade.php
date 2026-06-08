@@ -24,32 +24,33 @@
             <li><a href="/how-it-works" class="{{ request()->is('how-it-works') ? 'active' : '' }}">How It Works</a></li>
             <li><a href="/contact" class="{{ request()->is('contact') ? 'active' : '' }}">Contact</a></li>
 
-            @auth
+           @auth
 <li><a href="/my-bookings" class="{{ request()->is('my-bookings') ? 'active' : '' }}">My Bookings</a></li>
 <li><a href="/messages" class="{{ request()->is('messages*') ? 'active' : '' }}">Messages</a></li>
 @endauth
         </ul>
 
         <div class="nav-actions" id="navActions">
-            @guest
-                <a href="/login" class="btn-ghost">Log In</a>
-                <a href="/register" class="btn-primary">Get Started</a>
-            @else
-                <span class="nav-user">{{ Auth::user()->name }}</span>
-
-                <form method="POST" action="/logout" style="display:inline">
-                    @csrf
-                    <button type="submit" class="btn-ghost">Log Out</button>
-                </form>
-            @endguest
-        </div>
-
-        <button class="hamburger" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </div>
+    @guest
+        <a href="/login" class="btn-ghost">Log In</a>
+        <a href="/register" class="btn-primary">Get Started</a>
+    @else
+        <a href="/profile" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--black)">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;color:var(--blue);overflow:hidden">
+                @if(Auth::user()->avatar_url)
+                    <img src="{{ Auth::user()->avatar_url }}" style="width:100%;height:100%;object-fit:cover">
+                @else
+                    {{ Auth::user()->initials }}
+                @endif
+            </div>
+            <span class="nav-user" style="font-size:.85rem">{{ Auth::user()->name }}</span>
+        </a>
+        <form method="POST" action="/logout" style="display:inline">
+            @csrf
+            <button type="submit" class="btn-ghost">Log Out</button>
+        </form>
+    @endguest
+</div>
 </nav>
 
 @if(session('success'))
