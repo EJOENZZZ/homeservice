@@ -21,6 +21,17 @@ return new class extends Migration {
             $table->decimal('hourly_rate', 8, 2)->nullable();
             $table->string('location')->nullable();
             $table->string('avatar')->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->string('password')->nullable();
+            $table->boolean('is_verified')->default(false);
+            $table->boolean('must_change_password')->default(false);
+            $table->string('verification_code')->nullable();
+            $table->timestamp('verification_expires_at')->nullable();
+            $table->timestamp('last_seen_at')->nullable();
+            $table->string('phone')->nullable();
+            $table->unsignedInteger('years_experience')->nullable();
+            $table->string('facebook')->nullable();
+            $table->string('instagram')->nullable();
             $table->timestamps();
         });
     }

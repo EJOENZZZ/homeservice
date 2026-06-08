@@ -178,7 +178,7 @@ class AdminController extends Controller
         $tempPassword = 'Pro@' . Str::random(8);
 
         if ($request->hasFile('photo')) {
-            $data['avatar_url'] = $this->uploadPhoto($request->file('photo'));
+            $data['avatar'] = $this->uploadPhoto($request->file('photo'));
         }
 
         $data['password']             = Hash::make($tempPassword);
@@ -215,7 +215,7 @@ class AdminController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            $data['avatar_url'] = $this->uploadPhoto($request->file('photo'));
+            $data['avatar'] = $this->uploadPhoto($request->file('photo'));
         }
 
         $data['is_active'] = $request->has('is_active') ? (bool)$request->is_active : $pro->is_active;

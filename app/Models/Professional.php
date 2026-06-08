@@ -12,7 +12,7 @@ class Professional extends Authenticatable
     protected $fillable = [
         'user_id', 'first_name', 'last_name', 'specialty',
         'badge', 'rating', 'jobs_count', 'bio', 'is_active',
-        'hourly_rate', 'location', 'avatar', 'avatar_url',
+        'hourly_rate', 'location', 'avatar',
         'email', 'password', 'is_verified',
         'verification_code', 'verification_expires_at',
         'last_seen_at', 'must_change_password',
@@ -31,6 +31,11 @@ class Professional extends Authenticatable
         'last_seen_at'            => 'datetime',
         'password'                => 'hashed',
     ];
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->avatar;
+    }
 
     public function getFullNameAttribute(): string
     {
