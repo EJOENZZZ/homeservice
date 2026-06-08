@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             [
                 'first_name'  => 'Marco',
                 'last_name'   => 'Reyes',
-                'email'       => 'admin2@homefix.app',
+                'email'       => 'superadmin2@homefix.app',
                 'password'    => Hash::make('Superadmin@12345'),
                 'specialty'   => 'Electrical',
                 'badge'       => 'TOP PRO',
@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
             [
                 'first_name'  => 'Ana',
                 'last_name'   => 'Santos',
-                'email'       => 'admin3@homefix.app',
+                'email'       => 'superadmin3@homefix.app',
                 'password'    => Hash::make('Superadmin@12345'),
                 'specialty'   => 'Carpentry',
                 'badge'       => 'VERIFIED',
@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
             [
                 'first_name'  => 'Luis',
                 'last_name'   => 'Bautista',
-                'email'       => 'admin4@homefix.app',
+                'email'       => 'superadmin4@homefix.app',
                 'password'    => Hash::make('Superadmin@12345'),
                 'specialty'   => 'Cleaning',
                 'badge'       => 'TOP PRO',
@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
             [
                 'first_name'  => 'Maria',
                 'last_name'   => 'Fernandez',
-                'email'       => 'admin5@homefix.app',
+                'email'       => 'superadmin5@homefix.app',
                 'password'    => Hash::make('Superadmin@12345'),
                 'specialty'   => 'Painting',
                 'badge'       => 'ELITE',
