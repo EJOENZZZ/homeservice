@@ -86,6 +86,7 @@
         </a>
         <div class="nav-section">ACCOUNT</div>
         <a href="/pro/profile" class="nav-item {{ request()->is('pro/profile') ? 'active' : '' }}">👤 My Profile</a>
+        <a href="/contact" class="nav-item {{ request()->is('contact') ? 'active' : '' }}">✉️ Contact Admin</a>
         <a href="/" target="_blank" class="nav-item">🌐 View Site</a>
     </nav>
     <div class="sidebar-footer">

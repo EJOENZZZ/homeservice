@@ -1,10 +1,13 @@
 @extends('admin.layout')
-@section('page-title', 'Contact Messages')
+@section('page-title', 'Pro Contact Messages')
 
 @section('content')
 <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-        <h2 class="card-title" style="margin-bottom:0">Contact Messages</h2>
+        <div>
+            <h2 class="card-title" style="margin-bottom:4px">Pro Contact Messages</h2>
+            <div style="font-size:.82rem;color:var(--gray-mid)">Messages sent by professional accounts only</div>
+        </div>
         <span style="font-size:.82rem;color:var(--gray-mid)">{{ $messages->total() }} total &mdash; {{ $unread }} unread</span>
     </div>
 
