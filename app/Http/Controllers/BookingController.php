@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Professional;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
@@ -21,14 +22,13 @@ class BookingController extends Controller
 
     public function index()
     {
-        try {
-            $bookings = Booking::where('user_id', Auth::id())
-                ->with('professional')
-                ->latest()
-                ->get();
-        } catch (\Exception $e) {
-            $bookings = collect();
-        }
+        $bookings = Booking::where('user_id', Auth::id())
+            ->with(['professional' => function ($query) {
+                $query->select('id', 'first_name', 'last_name', 'specialty', 'hourly_rate');
+            }])
+            ->latest()
+            ->get();
+
         return view('pages.my-bookings', compact('bookings'));
     }
 
@@ -47,7 +47,7 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'professional_id' => 'required',
+            'professional_id' => 'required|integer',
             'service_date'    => 'required|date|after_or_equal:today',
             'service_time'    => 'required',
             'address'         => 'required|string|max:500',
@@ -56,10 +56,15 @@ class BookingController extends Controller
             'payment_method'  => 'required|in:gcash,after_service',
         ]);
 
+        $professionalId = $data['professional_id'];
+
+        // Check if professional exists in real table
+        $proExists = Professional::where('id', $professionalId)->exists();
+
         try {
             Booking::create([
                 'user_id'         => Auth::id(),
-                'professional_id' => $data['professional_id'],
+                'professional_id' => $professionalId,
                 'service_date'    => $data['service_date'],
                 'service_time'    => $data['service_time'],
                 'address'         => $data['address'],
@@ -69,7 +74,25 @@ class BookingController extends Controller
                 'status'          => 'pending',
             ]);
         } catch (\Exception $e) {
-            // DB unavailable — still show success
+            // Fallback for static/demo professionals (no FK record)
+            if (!$proExists) {
+                DB::table('bookings')->insert([
+                    'user_id'         => Auth::id(),
+                    'professional_id' => $professionalId,
+                    'service_date'    => $data['service_date'],
+                    'service_time'    => $data['service_time'],
+                    'address'         => $data['address'],
+                    'notes'           => $data['notes'] ?? null,
+                    'estimated_hours' => $data['estimated_hours'],
+                    'payment_method'  => $data['payment_method'],
+                    'status'          => 'pending',
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                ]);
+            } else {
+                // Re-throw if it's a real error
+                throw $e;
+            }
         }
 
         $msg = $data['payment_method'] === 'gcash'
