@@ -62,7 +62,7 @@
         <a href="/pro/messages" class="nav-item">💬 Messages</a>
         <div class="nav-section">ACCOUNT</div>
         <a href="/pro/profile" class="nav-item">👤 My Profile</a>
-        <a href="/contact" class="nav-item {{ request()->is('contact') ? 'active' : '' }}">✉️ Contact Admin</a>
+        <a href="javascript:void(0)" class="nav-item" onclick="openContactAdminModal();return false;">✉️ Contact Admin</a>
         <a href="/" target="_blank" class="nav-item">🌐 View Site</a>
     </nav>
     <div class="sidebar-footer">
@@ -159,6 +159,68 @@
         </div>
     </div>
 </div>
+
+<div id="contact-admin-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.72);align-items:center;justify-content:center;padding:20px">
+    <div style="background:#fff;color:#111827;max-width:620px;width:100%;border-radius:24px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.28)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px">
+            <div>
+                <div style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:4px">Contact Admin</div>
+                <div style="font-size:.85rem;color:#64748B">Same page ra ni. Send a message to admin without leaving your bookings.</div>
+            </div>
+            <button type="button" onclick="closeContactAdminModal()" style="background:none;border:none;font-size:1.6rem;line-height:1;color:#64748B;cursor:pointer">&times;</button>
+        </div>
+
+        @if(session('success'))
+        <div style="background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;border-radius:12px;padding:12px 14px;margin-bottom:16px">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+        <div style="background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:12px;padding:12px 14px;margin-bottom:16px">{{ session('error') }}</div>
+        @endif
+
+        <form method="POST" action="{{ route('contact.store') }}">
+            @csrf
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+                <div>
+                    <label style="display:block;font-size:.82rem;font-weight:700;color:#374151;margin-bottom:6px">Name</label>
+                    <input type="text" value="{{ $pro->full_name }}" readonly style="width:100%;border:1.5px solid #E5E7EB;border-radius:12px;padding:12px 14px;background:#F9FAFB;color:#111827">
+                </div>
+                <div>
+                    <label style="display:block;font-size:.82rem;font-weight:700;color:#374151;margin-bottom:6px">Email</label>
+                    <input type="text" value="{{ $pro->email }}" readonly style="width:100%;border:1.5px solid #E5E7EB;border-radius:12px;padding:12px 14px;background:#F9FAFB;color:#111827">
+                </div>
+            </div>
+            <div style="margin-bottom:14px">
+                <label style="display:block;font-size:.82rem;font-weight:700;color:#374151;margin-bottom:6px">Subject</label>
+                <input type="text" name="subject" value="{{ old('subject') }}" placeholder="What do you need help with?" required style="width:100%;border:1.5px solid #E5E7EB;border-radius:12px;padding:12px 14px;outline:none">
+            </div>
+            <div style="margin-bottom:18px">
+                <label style="display:block;font-size:.82rem;font-weight:700;color:#374151;margin-bottom:6px">Message</label>
+                <textarea name="message" rows="6" placeholder="Write your message to the admin..." required style="width:100%;border:1.5px solid #E5E7EB;border-radius:12px;padding:12px 14px;outline:none;resize:vertical">{{ old('message') }}</textarea>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap">
+                <button type="button" onclick="closeContactAdminModal()" class="btn btn-ghost">Cancel</button>
+                <button type="submit" class="btn btn-blue">Send to Admin</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openContactAdminModal() {
+    const modal = document.getElementById('contact-admin-modal');
+    if (modal) modal.style.display = 'flex';
+}
+function closeContactAdminModal() {
+    const modal = document.getElementById('contact-admin-modal');
+    if (modal) modal.style.display = 'none';
+}
+document.getElementById('contact-admin-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeContactAdminModal();
+});
+@if(session('success') || session('error') || $errors->any() || old('subject') || old('message'))
+openContactAdminModal();
+@endif
+</script>
 
 </body>
 </html>
