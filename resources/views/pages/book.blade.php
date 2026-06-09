@@ -17,7 +17,7 @@
         </div>
 
         @if($errors->any())
-        <div class="form-error-box">
+        <div class="form-error-box" style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:14px 16px;margin-bottom:20px;color:#991B1B;font-size:.88rem">
             <ul style="margin:0;padding-left:16px">
                 @foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach
             </ul>
@@ -32,7 +32,7 @@
                 <label>Service Date</label>
                 <input type="date" name="service_date" id="service_date"
                     value="{{ old('service_date') }}"
-                    min="{{ date('Y-m-d', strtotime('+1 day')) }}" required>
+                    min="{{ date('Y-m-d') }}" required>
             </div>
 
             <div class="form-group">
@@ -43,7 +43,7 @@
 
             <div class="form-group">
                 <label>Estimated Hours</label>
-                <select name="estimated_hours" id="estimated_hours" required
+                <select name="estimated_hours" id="estimated_hours"
                     style="width:100%;border:1.5px solid var(--gray-border);border-radius:10px;padding:10px 14px;font-size:.92rem;font-family:'DM Sans',sans-serif;outline:none;background:#fff">
                     <option value="">Select estimated hours...</option>
                     @for($h = 1; $h <= 8; $h++)
@@ -72,47 +72,35 @@
                 <label>Payment Method</label>
                 <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
 
-                    {{-- GCASH --}}
                     <label id="pay-gcash-wrap"
                         style="cursor:pointer;display:flex;align-items:flex-start;gap:12px;background:#F0FDF4;border:2px solid #22C55E;border-radius:12px;padding:14px 16px;transition:all .2s"
                         onclick="selectPayment('gcash')">
                         <input type="radio" name="payment_method" value="gcash" id="pay-gcash"
-                            style="margin-top:3px;accent-color:#22C55E"
-                            {{ old('payment_method','gcash') === 'gcash' ? 'checked' : '' }}>
+                            style="margin-top:3px;accent-color:#22C55E" checked>
                         <div style="flex:1">
-                            <div style="font-weight:700;font-size:.92rem;color:#15803D">
-                                💚 GCash (Pay Before Service)
-                            </div>
-                            <div style="font-size:.8rem;color:#166534;margin-top:2px">
-                                Send payment via GCash before the scheduled date. QR code will be shown after confirming.
-                            </div>
+                            <div style="font-weight:700;font-size:.92rem;color:#15803D">💚 GCash (Pay Before Service)</div>
+                            <div style="font-size:.8rem;color:#166534;margin-top:2px">Send payment via GCash before the scheduled date. QR code will be shown after confirming.</div>
                         </div>
                     </label>
 
-                    {{-- CASH AFTER SERVICE --}}
                     <label id="pay-after-wrap"
                         style="cursor:pointer;display:flex;align-items:flex-start;gap:12px;background:#fff;border:2px solid var(--gray-border);border-radius:12px;padding:14px 16px;transition:all .2s"
                         onclick="selectPayment('after_service')">
                         <input type="radio" name="payment_method" value="after_service" id="pay-after"
-                            style="margin-top:3px;accent-color:var(--blue)"
-                            {{ old('payment_method') === 'after_service' ? 'checked' : '' }}>
+                            style="margin-top:3px;accent-color:var(--blue)">
                         <div style="flex:1">
-                            <div style="font-weight:700;font-size:.92rem;color:var(--black)">
-                                💵 Cash After Service
-                            </div>
-                            <div style="font-size:.8rem;color:var(--gray-mid);margin-top:2px">
-                                Pay in cash directly to the professional after the job is done.
-                            </div>
+                            <div style="font-weight:700;font-size:.92rem;color:var(--black)">💵 Cash After Service</div>
+                            <div style="font-size:.8rem;color:var(--gray-mid);margin-top:2px">Pay in cash directly to the professional after the job is done.</div>
                         </div>
                     </label>
 
                 </div>
             </div>
 
-            {{-- BOOKING CONFIRMATION SUMMARY --}}
+            {{-- BOOKING SUMMARY --}}
             <div id="booking-summary"
                 style="background:#EFF6FF;border:2px solid #BFDBFE;border-radius:16px;padding:20px;margin-top:4px;margin-bottom:8px;display:none">
-                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:#1E40AF;margin-bottom:14px;display:flex;align-items:center;gap:8px">
+                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:#1E40AF;margin-bottom:14px">
                     🧾 Booking Summary
                 </div>
                 <div style="display:flex;flex-direction:column;gap:9px;font-size:.88rem">
@@ -157,59 +145,43 @@
 <div id="gcash-modal"
     style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
     <div style="background:#fff;border-radius:24px;padding:36px 28px;max-width:380px;width:92%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.25)">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:4px">GCash Payment</div>
+        <div style="color:var(--gray-mid);font-size:.85rem;margin-bottom:20px">Scan the QR code to pay before your scheduled service</div>
 
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;margin-bottom:4px">
-            GCash Payment
-        </div>
-        <div style="color:var(--gray-mid);font-size:.85rem;margin-bottom:20px">
-            Scan the QR code to pay before your scheduled service
-        </div>
-
-        {{-- QR CODE --}}
         <div style="background:#F0FDF4;border:2px dashed #22C55E;border-radius:16px;padding:20px;margin-bottom:18px;display:inline-block">
             <div id="qrcode" style="margin:0 auto"></div>
         </div>
 
-        {{-- PRO NAME & NUMBER --}}
         <div style="background:#F0FDF4;border-radius:12px;padding:14px 16px;margin-bottom:18px">
-            <div style="font-size:.72rem;color:#166534;font-weight:700;letter-spacing:.07em;margin-bottom:4px">
-                SEND PAYMENT TO
-            </div>
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#15803D">
-                {{ $pro->first_name }} {{ $pro->last_name }}
-            </div>
+            <div style="font-size:.72rem;color:#166534;font-weight:700;letter-spacing:.07em;margin-bottom:4px">SEND PAYMENT TO</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#15803D">{{ $pro->first_name }} {{ $pro->last_name }}</div>
             @if(!empty($pro->phone))
-            <div style="font-size:.88rem;color:#166534;margin-top:4px;font-weight:600">
-                {{ $pro->phone }}
-            </div>
+            <div style="font-size:.88rem;color:#166534;margin-top:4px;font-weight:600">{{ $pro->phone }}</div>
             @endif
             <div style="font-size:.78rem;color:#166534;margin-top:2px">GCash Account</div>
         </div>
 
-        {{-- TOTAL --}}
         <div style="background:#EFF6FF;border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:.85rem;color:#1E40AF">
             Estimated Total: <strong id="modal-total" style="font-size:1rem">—</strong><br>
             <span style="font-size:.76rem">Please send the exact amount and keep your screenshot as proof.</span>
         </div>
 
-        <button onclick="closeGcashModal()" class="btn-primary"
-            style="width:100%;justify-content:center;margin-bottom:10px">
+        <button onclick="closeGcashModal()" class="btn-primary" style="width:100%;justify-content:center;margin-bottom:10px">
             Done — I've Sent Payment ✓
         </button>
-        <button onclick="closeGcashModal()"
-            style="background:none;border:none;color:var(--gray-mid);font-size:.85rem;cursor:pointer;width:100%">
+        <button onclick="closeGcashModal()" style="background:none;border:none;color:var(--gray-mid);font-size:.85rem;cursor:pointer;width:100%">
             I'll pay later
         </button>
     </div>
 </div>
 
-{{-- QR CODE LIBRARY --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const hourlyRate = {{ $pro->hourly_rate ?? 350 }};
 const proName    = "{{ $pro->first_name }} {{ $pro->last_name }}";
 const proPhone   = "{{ $pro->phone ?? '' }}";
 let qrGenerated  = false;
+let formSubmitting = false;
 
 function selectPayment(method) {
     const gcashWrap = document.getElementById('pay-gcash-wrap');
@@ -244,8 +216,7 @@ function updateSummary() {
         const d = new Date(date + 'T' + time);
         document.getElementById('summary-datetime').textContent =
             d.toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' }) +
-            ' @ ' +
-            d.toLocaleTimeString('en-PH', { hour:'numeric', minute:'2-digit', hour12:true });
+            ' @ ' + d.toLocaleTimeString('en-PH', { hour:'numeric', minute:'2-digit', hour12:true });
     }
 
     if (hours) {
@@ -265,6 +236,7 @@ document.getElementById('service_time').addEventListener('change', updateSummary
 document.getElementById('estimated_hours').addEventListener('change', updateSummary);
 
 document.getElementById('booking-form').addEventListener('submit', function(e) {
+    if (formSubmitting) return;
     const method = document.querySelector('input[name="payment_method"]:checked')?.value;
     if (method === 'gcash') {
         e.preventDefault();
@@ -279,11 +251,8 @@ function showGcashModal() {
             ? 'GCash Payment to ' + proName + ' | ' + proPhone
             : 'GCash Payment to ' + proName;
         new QRCode(document.getElementById('qrcode'), {
-            text: qrContent,
-            width: 180,
-            height: 180,
-            colorDark: '#15803D',
-            colorLight: '#F0FDF4',
+            text: qrContent, width: 180, height: 180,
+            colorDark: '#15803D', colorLight: '#F0FDF4',
         });
         qrGenerated = true;
     }
@@ -291,6 +260,7 @@ function showGcashModal() {
 
 function closeGcashModal() {
     document.getElementById('gcash-modal').style.display = 'none';
+    formSubmitting = true;
     document.getElementById('booking-form').submit();
 }
 
@@ -299,8 +269,7 @@ document.getElementById('gcash-modal').addEventListener('click', function(e) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const checked = document.querySelector('input[name="payment_method"]:checked');
-    if (checked) selectPayment(checked.value);
+    selectPayment('gcash');
     updateSummary();
 });
 </script>
