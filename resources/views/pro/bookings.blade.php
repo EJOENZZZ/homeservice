@@ -165,7 +165,6 @@
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px">
             <div>
                 <div style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:4px">Contact Admin</div>
-                <div style="font-size:.85rem;color:#64748B">Same page ra ni. Send a message to admin without leaving your bookings.</div>
             </div>
             <button type="button" onclick="closeContactAdminModal()" style="background:none;border:none;font-size:1.6rem;line-height:1;color:#64748B;cursor:pointer">&times;</button>
         </div>
