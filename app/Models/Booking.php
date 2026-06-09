@@ -10,8 +10,20 @@ class Booking extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'professional_id', 'service_date',
-        'service_time', 'address', 'notes', 'status',
+        'user_id',
+        'professional_id',
+        'service_date',
+        'service_time',
+        'address',
+        'notes',
+        'status',
+        'estimated_hours',
+        'payment_method',
+    ];
+
+    protected $casts = [
+        'service_date'    => 'date',
+        'estimated_hours' => 'integer',
     ];
 
     public function user()
@@ -22,5 +34,27 @@ class Booking extends Model
     public function professional()
     {
         return $this->belongsTo(Professional::class);
+    }
+
+    /**
+     * Estimated total based on hourly rate × estimated hours.
+     */
+    public function getEstimatedTotalAttribute(): float
+    {
+        $rate  = $this->professional?->hourly_rate ?? 0;
+        $hours = $this->estimated_hours ?? 1;
+        return $rate * $hours;
+    }
+
+    /**
+     * Human-readable payment method label.
+     */
+    public function getPaymentLabelAttribute(): string
+    {
+        return match($this->payment_method) {
+            'gcash'         => 'GCash',
+            'after_service' => 'Cash After Service',
+            default         => ucfirst($this->payment_method ?? '—'),
+        };
     }
 }
