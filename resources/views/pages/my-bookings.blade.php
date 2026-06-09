@@ -4,12 +4,6 @@
 <div class="page-wrap">
     <h1 class="page-title">My Bookings</h1>
 
-    @if(session('success'))
-    <div class="alert-success" style="margin-bottom:24px">
-        {{ session('success') }}
-    </div>
-    @endif
-
     @if($bookings->isEmpty())
     <div class="empty-state">
         <p>You have no bookings yet.</p>

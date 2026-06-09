@@ -20,7 +20,18 @@
                 @forelse($users as $u)
                 <tr>
                     <td style="color:#9CA3AF">{{ $u->id }}</td>
-                    <td style="font-weight:600">{{ $u->name }}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;border-radius:50%;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;overflow:hidden;flex-shrink:0;">
+                                @if($u->avatar_url)
+                                    <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" style="width:100%;height:100%;object-fit:cover;">
+                                @else
+                                    {{ $u->initials }}
+                                @endif
+                            </div>
+                            <span style="font-weight:600">{{ $u->name }}</span>
+                        </div>
+                    </td>
                     <td style="color:#6B7280">{{ $u->email }}</td>
                     <td>
                         <span class="badge {{ $u->is_verified ? 'badge-verified' : 'badge-unverified' }}">

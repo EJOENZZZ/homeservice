@@ -47,8 +47,19 @@
                     <td style="color:var(--gray-mid);font-size:.8rem;">{{ $booking->id }}</td>
 
                     <td>
-                        <div style="font-weight:500;">{{ $booking->user->name ?? 'N/A' }}</div>
-                        <div style="font-size:.78rem;color:var(--gray-mid);">{{ $booking->user->email ?? '' }}</div>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:34px;height:34px;border-radius:50%;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;overflow:hidden;flex-shrink:0;">
+                                @if($booking->user?->avatar_url)
+                                    <img src="{{ $booking->user->avatar_url }}" alt="{{ $booking->user->name ?? 'User' }}" style="width:100%;height:100%;object-fit:cover;">
+                                @else
+                                    {{ $booking->user?->initials ?? 'U' }}
+                                @endif
+                            </div>
+                            <div>
+                                <div style="font-weight:500;line-height:1.2;">{{ $booking->user->name ?? 'N/A' }}</div>
+                                <div style="font-size:.78rem;color:var(--gray-mid);line-height:1.2;">{{ $booking->user->email ?? '' }}</div>
+                            </div>
+                        </div>
                     </td>
 
                     <td>{{ $booking->professional->name ?? 'N/A' }}</td>

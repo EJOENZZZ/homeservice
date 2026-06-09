@@ -42,7 +42,13 @@
         @foreach($conversations as $conv)
         @php $user = $conv->user; $latest = $conv->latestMessage; @endphp
         <a href="/pro/messages/{{ $conv->id }}" class="conv-item">
-            <div class="avatar">{{ strtoupper(substr($user->name ?? 'U', 0, 2)) }}</div>
+            <div class="avatar">
+                @if($user?->avatar_url)
+                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name ?? 'User' }}">
+                @else
+                    {{ $user?->initials ?? 'U' }}
+                @endif
+            </div>
             <div class="info">
                 <div class="name">{{ $user->name ?? 'Unknown' }}</div>
                 @if($latest)

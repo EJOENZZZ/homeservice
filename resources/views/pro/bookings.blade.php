@@ -104,8 +104,19 @@
                         @foreach($bookings as $b)
                         <tr>
                             <td>
-                                <div style="font-weight:600">{{ $b->user->name ?? '—' }}</div>
-                                <div style="font-size:.75rem;color:#64748B">{{ $b->user->email ?? '' }}</div>
+                                <div style="display:flex;align-items:center;gap:12px;">
+                                    <div style="width:34px;height:34px;border-radius:50%;background:#1E293B;color:#60A5FA;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;overflow:hidden;flex-shrink:0;">
+                                        @if($b->user?->avatar_url)
+                                            <img src="{{ $b->user->avatar_url }}" alt="{{ $b->user->name ?? 'User' }}" style="width:100%;height:100%;object-fit:cover;">
+                                        @else
+                                            {{ $b->user?->initials ?? 'U' }}
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;line-height:1.2">{{ $b->user->name ?? '—' }}</div>
+                                        <div style="font-size:.75rem;color:#64748B;line-height:1.2">{{ $b->user->email ?? '' }}</div>
+                                    </div>
+                                </div>
                                 @if($b->user)
                                 <a href="/pro/messages" style="font-size:.75rem;color:#60A5FA;text-decoration:none">💬 Message</a>
                                 @endif

@@ -34,7 +34,13 @@
 
 <div class="topbar">
     <a href="/pro/messages" class="back">←</a>
-    <div class="avatar">{{ strtoupper(substr($conversation->user->name ?? 'U', 0, 2)) }}</div>
+    <div class="avatar">
+        @if($conversation->user?->avatar_url)
+            <img src="{{ $conversation->user->avatar_url }}" alt="{{ $conversation->user->name ?? 'User' }}">
+        @else
+            {{ $conversation->user?->initials ?? 'U' }}
+        @endif
+    </div>
     <div>
         <div class="user-name">{{ $conversation->user->name ?? 'Customer' }}</div>
         <div class="user-email">{{ $conversation->user->email ?? '' }}</div>
