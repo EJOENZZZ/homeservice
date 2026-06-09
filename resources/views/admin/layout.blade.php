@@ -189,6 +189,9 @@
         <a href="/admin/testimonials" class="nav-item {{ request()->is('admin/testimonials*') ? 'active' : '' }}">
             <span class="nav-icon">⭐</span> Testimonials
         </a>
+        <a href="/admin/messages" class="nav-item {{ request()->is('admin/messages*') ? 'active' : '' }}">
+            <span class="nav-icon">💬</span> Messages
+        </a>
         <a href="/admin/contact-messages" class="nav-item {{ request()->is('admin/contact-messages*') ? 'active' : '' }}">
             <span class="nav-icon">✉️</span> Contact Messages
             @php
