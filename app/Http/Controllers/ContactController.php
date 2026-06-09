@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ContactMessage;
 use App\Models\Professional;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class ContactController extends Controller
 {
@@ -31,6 +32,10 @@ class ContactController extends Controller
             'subject' => 'required|string|max:255',
             'message' => 'required|string|max:2000',
         ]);
+
+        if (!Schema::hasTable('contact_messages')) {
+            return back()->with('error', 'Contact inbox is temporarily unavailable. Please try again later.');
+        }
 
         ContactMessage::create([
             'name' => $pro->full_name,

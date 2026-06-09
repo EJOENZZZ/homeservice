@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Booking;
+use App\Models\ContactMessage;
 use App\Models\Professional;
 use App\Models\Testimonial;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Notification;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class AdminController extends Controller
@@ -291,22 +294,39 @@ class AdminController extends Controller
     public function contactMessages()
     {
         if ($r = $this->guard()) return $r;
-        $messages = \App\Models\ContactMessage::latest()->paginate(15);
-        $unread   = \App\Models\ContactMessage::where('is_read', false)->count();
+        if (!Schema::hasTable('contact_messages')) {
+            $messages = new LengthAwarePaginator([], 0, 15, 1, [
+                'path' => request()->url(),
+                'query' => request()->query(),
+            ]);
+            $unread = 0;
+            return view('admin.contact-messages', compact('messages', 'unread'));
+        }
+
+        $messages = ContactMessage::latest()->paginate(15);
+        $unread   = ContactMessage::where('is_read', false)->count();
         return view('admin.contact-messages', compact('messages', 'unread'));
     }
 
     public function markContactRead($id)
     {
         if ($r = $this->guard()) return $r;
-        \App\Models\ContactMessage::findOrFail($id)->update(['is_read' => true]);
+        if (!Schema::hasTable('contact_messages')) {
+            return response()->json(['ok' => false, 'message' => 'Contact messages table is not available.'], 200);
+        }
+
+        ContactMessage::findOrFail($id)->update(['is_read' => true]);
         return response()->json(['ok' => true]);
     }
 
     public function deleteContact($id)
     {
         if ($r = $this->guard()) return $r;
-        \App\Models\ContactMessage::findOrFail($id)->delete();
+        if (!Schema::hasTable('contact_messages')) {
+            return back()->with('error', 'Contact messages table is not available.');
+        }
+
+        ContactMessage::findOrFail($id)->delete();
         return back()->with('success', 'Message deleted.');
     }
 
