@@ -112,3 +112,15 @@ Route::get('/check-pros-hf2026', function () {
     return \App\Models\Professional::select('id','first_name','email','password','is_verified','is_active')->get();
 });
 
+// ── TEMPORARY MIGRATION ROUTE (for Vercel) ─────────────
+Route::get('/run-migration', function () {
+    if (request('key') !== 'homefix-migrate-2026') {
+        abort(403, 'Invalid key');
+    }
+    try {
+        \Artisan::call('migrate', ['--force' => true]);
+        return '✅ Migrations ran successfully!<br><pre>' . \Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return '❌ Error: ' . $e->getMessage();
+    }
+});

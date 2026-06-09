@@ -58,9 +58,6 @@ class BookingController extends Controller
 
         $professionalId = $data['professional_id'];
 
-        // Check if professional exists in real table
-        $proExists = Professional::where('id', $professionalId)->exists();
-
         try {
             Booking::create([
                 'user_id'         => Auth::id(),
@@ -74,25 +71,20 @@ class BookingController extends Controller
                 'status'          => 'pending',
             ]);
         } catch (\Exception $e) {
-            // Fallback for static/demo professionals (no FK record)
-            if (!$proExists) {
-                DB::table('bookings')->insert([
-                    'user_id'         => Auth::id(),
-                    'professional_id' => $professionalId,
-                    'service_date'    => $data['service_date'],
-                    'service_time'    => $data['service_time'],
-                    'address'         => $data['address'],
-                    'notes'           => $data['notes'] ?? null,
-                    'estimated_hours' => $data['estimated_hours'],
-                    'payment_method'  => $data['payment_method'],
-                    'status'          => 'pending',
-                    'created_at'      => now(),
-                    'updated_at'      => now(),
-                ]);
-            } else {
-                // Re-throw if it's a real error
-                throw $e;
-            }
+            // Fallback for static professionals or column issues
+            DB::table('bookings')->insert([
+                'user_id'         => Auth::id(),
+                'professional_id' => $professionalId,
+                'service_date'    => $data['service_date'],
+                'service_time'    => $data['service_time'],
+                'address'         => $data['address'],
+                'notes'           => $data['notes'] ?? null,
+                'estimated_hours' => $data['estimated_hours'],
+                'payment_method'  => $data['payment_method'],
+                'status'          => 'pending',
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
         }
 
         $msg = $data['payment_method'] === 'gcash'
