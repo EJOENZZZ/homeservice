@@ -58,31 +58,37 @@ class BookingController extends Controller
 
         $professionalId = $data['professional_id'];
 
-        $bookingData = [
+        // Minimal safe data (only columns that should always exist)
+        $safeData = [
             'user_id'         => Auth::id(),
             'professional_id' => $professionalId,
             'service_date'    => $data['service_date'],
             'service_time'    => $data['service_time'],
             'address'         => $data['address'],
             'notes'           => $data['notes'] ?? null,
-            'payment_method'  => $data['payment_method'],
             'status'          => 'pending',
             'created_at'      => now(),
             'updated_at'      => now(),
         ];
 
-        // Try with estimated_hours first
         try {
-            $bookingData['estimated_hours'] = $data['estimated_hours'];
-            Booking::create($bookingData);
+            // Try full insert first
+            Booking::create(array_merge($safeData, [
+                'estimated_hours' => $data['estimated_hours'],
+                'payment_method'  => $data['payment_method'],
+            ]));
         } catch (\Exception $e) {
-            // Fallback without estimated_hours
-            unset($bookingData['estimated_hours']);
-            DB::table('bookings')->insert($bookingData);
+            // Safe fallback - only basic columns
+            try {
+                DB::table('bookings')->insert($safeData);
+            } catch (\Exception $fallbackError) {
+                return redirect('/my-bookings')
+                    ->with('error', 'Could not create booking. Please contact support.');
+            }
         }
 
         $msg = $data['payment_method'] === 'gcash'
-            ? 'Booking confirmed! Please complete your GCash payment.'
+            ? 'Booking confirmed! Please complete your GCash payment to the professional.'
             : 'Booking confirmed! The professional will contact you shortly.';
 
         return redirect('/my-bookings')->with('success', $msg);
