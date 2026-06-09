@@ -41,6 +41,41 @@
                 <div><span>💳</span> {{ $b->payment_label }}</div>
                 @endif
             </div>
+
+            @if($b->status === 'completed')
+                @if($b->user_rating)
+                <div style="margin-top:16px;padding:14px 16px;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:14px">
+                    <div style="font-weight:700;color:#065F46;margin-bottom:6px">Your Rating</div>
+                    <div style="color:#047857;font-size:.92rem;margin-bottom:6px">
+                        {{ str_repeat('⭐', (int) $b->user_rating) }}
+                    </div>
+                    @if($b->user_review)
+                    <div style="font-size:.86rem;color:#047857;line-height:1.5">{{ $b->user_review }}</div>
+                    @endif
+                </div>
+                @else
+                <form method="POST" action="{{ route('booking.rate', $b->id) }}" style="margin-top:16px;padding:16px;border:1px solid #BFDBFE;background:#EFF6FF;border-radius:14px">
+                    @csrf
+                    <div style="font-weight:700;color:#1E40AF;margin-bottom:10px">Rate this service</div>
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label style="font-size:.85rem;font-weight:600;color:#1E3A8A">Rating</label>
+                        <select name="user_rating" required style="width:100%;border:1.5px solid #BFDBFE;border-radius:10px;padding:10px 12px;background:#fff">
+                            <option value="">Select rating</option>
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Good</option>
+                            <option value="3">3 - Okay</option>
+                            <option value="2">2 - Poor</option>
+                            <option value="1">1 - Bad</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:12px">
+                        <label style="font-size:.85rem;font-weight:600;color:#1E3A8A">Review (optional)</label>
+                        <textarea name="user_review" rows="3" placeholder="Tell us about your experience..." style="width:100%;border:1.5px solid #BFDBFE;border-radius:10px;padding:10px 12px;resize:vertical"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Submit Rating</button>
+                </form>
+                @endif
+            @endif
         </div>
         @endforeach
     </div>

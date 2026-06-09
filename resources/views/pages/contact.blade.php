@@ -33,7 +33,7 @@
             </a>
 
             {{-- EMAIL --}}
-            <a href="https://m.me/homefix" target="_blank" style="text-decoration:none">
+            <a href="https://www.facebook.com/ejoenzzzzzz06/" target="_blank" rel="noopener noreferrer" style="text-decoration:none">
                 <div style="background:#fff;border:1.5px solid #E5E7EB;border-radius:18px;padding:28px 24px;text-align:center;transition:all .2s;cursor:pointer"
                     onmouseover="this.style.borderColor='#2563EB';this.style.boxShadow='0 4px 20px rgba(37,99,235,.1)'"
                     onmouseout="this.style.borderColor='#E5E7EB';this.style.boxShadow='none'">
@@ -62,7 +62,7 @@
             </div>
 
             {{-- FACEBOOK --}}
-            <a href="https://facebook.com/homefix" target="_blank" style="text-decoration:none">
+            <a href="https://www.facebook.com/ejoenzzzzzz06/" target="_blank" rel="noopener noreferrer" style="text-decoration:none">
                 <div style="background:#fff;border:1.5px solid #E5E7EB;border-radius:18px;padding:28px 24px;text-align:center;transition:all .2s;cursor:pointer"
                     onmouseover="this.style.borderColor='#2563EB';this.style.boxShadow='0 4px 20px rgba(37,99,235,.1)'"
                     onmouseout="this.style.borderColor='#E5E7EB';this.style.boxShadow='none'">

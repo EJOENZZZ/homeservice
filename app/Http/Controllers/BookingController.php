@@ -33,6 +33,25 @@ class BookingController extends Controller
         return view('pages.my-bookings', compact('bookings'));
     }
 
+    public function rate(Request $request, Booking $booking)
+    {
+        abort_unless($booking->user_id === Auth::id(), 403);
+        abort_unless($booking->status === 'completed', 422, 'You can only rate a completed service.');
+
+        $data = $request->validate([
+            'user_rating' => 'required|integer|min:1|max:5',
+            'user_review'  => 'nullable|string|max:1000',
+        ]);
+
+        $booking->update([
+            'user_rating' => $data['user_rating'],
+            'user_review'  => $data['user_review'] ?? null,
+            'rated_at'     => now(),
+        ]);
+
+        return back()->with('success', 'Thanks for your rating.');
+    }
+
     public function create(Request $request)
     {
         try {

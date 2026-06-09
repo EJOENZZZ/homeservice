@@ -19,11 +19,16 @@ class Booking extends Model
         'status',
         'estimated_hours',
         'payment_method',
+        'user_rating',
+        'user_review',
+        'rated_at',
     ];
 
     protected $casts = [
         'service_date'    => 'date',
         'estimated_hours' => 'integer',
+        'user_rating'     => 'integer',
+        'rated_at'        => 'datetime',
     ];
 
     public function user()

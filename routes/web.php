@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/book',        [BookingController::class, 'create'])->name('booking.create');
     Route::post('/book',       [BookingController::class, 'store'])->name('booking.store');
     Route::get('/my-bookings', [BookingController::class, 'index'])->name('booking.index');
+    Route::post('/my-bookings/{booking}/rate', [BookingController::class, 'rate'])->name('booking.rate');
 
     Route::get('/profile',          [UserProfileController::class, 'show'])->name('profile');
     Route::post('/profile',         [UserProfileController::class, 'update'])->name('profile.update');

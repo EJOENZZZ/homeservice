@@ -126,7 +126,17 @@
                                 <span style="font-size:.75rem;color:#64748B">{{ \Carbon\Carbon::parse($b->service_time)->format('g:i A') }}</span>
                             </td>
                             <td style="font-size:.82rem;color:#94A3B8;max-width:150px">{{ $b->address }}</td>
-                            <td style="font-size:.8rem;color:#64748B;max-width:150px">{{ $b->notes ?: '—' }}</td>
+                            <td style="font-size:.8rem;color:#64748B;max-width:150px">
+                                <div>{{ $b->notes ?: '—' }}</div>
+                                @if($b->user_rating)
+                                <div style="margin-top:8px;font-size:.75rem;color:#34D399">
+                                    <strong>Client rating:</strong> {{ str_repeat('⭐', (int) $b->user_rating) }}
+                                    @if($b->user_review)
+                                    <div style="margin-top:4px;color:#94A3B8;line-height:1.4">{{ $b->user_review }}</div>
+                                    @endif
+                                </div>
+                                @endif
+                            </td>
                             <td><span class="badge badge-{{ $b->status }}">{{ ucfirst($b->status) }}</span></td>
                             <td>
                                 <form method="POST" action="/pro/bookings/{{ $b->id }}">

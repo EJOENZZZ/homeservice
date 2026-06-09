@@ -76,7 +76,15 @@
                     </td>
 
                     <td style="font-size:.82rem;color:var(--gray-mid);max-width:140px;">
-                        {{ $booking->notes ?? '-' }}
+                        <div>{{ $booking->notes ?? '-' }}</div>
+                        @if($booking->user_rating)
+                        <div style="margin-top:8px;font-size:.75rem;color:#0F766E">
+                            <strong>Rating:</strong> {{ str_repeat('⭐', (int) $booking->user_rating) }}
+                            @if($booking->user_review)
+                            <div style="margin-top:4px;color:#475569;line-height:1.4">{{ $booking->user_review }}</div>
+                            @endif
+                        </div>
+                        @endif
                     </td>
 
                     <td>
