@@ -48,7 +48,7 @@ class BookingController extends Controller
     {
         $data = $request->validate([
             'professional_id' => 'required',
-            'service_date'    => 'required|date|after:today',
+            'service_date'    => 'required|date|after_or_equal:today',
             'service_time'    => 'required',
             'address'         => 'required|string|max:500',
             'notes'           => 'nullable|string|max:1000',
