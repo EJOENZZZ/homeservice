@@ -7,6 +7,7 @@ use App\Models\Professional;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class BookingController extends Controller
 {
@@ -56,41 +57,37 @@ class BookingController extends Controller
             'payment_method'  => 'required|in:gcash,after_service',
         ]);
 
-        $professionalId = $data['professional_id'];
-
-        // Minimal safe data (only columns that should always exist)
-        $safeData = [
+        $bookingData = [
             'user_id'         => Auth::id(),
-            'professional_id' => $professionalId,
+            'professional_id' => $data['professional_id'],
             'service_date'    => $data['service_date'],
             'service_time'    => $data['service_time'],
             'address'         => $data['address'],
             'notes'           => $data['notes'] ?? null,
             'status'          => 'pending',
-            'created_at'      => now(),
-            'updated_at'      => now(),
         ];
 
+        if (Schema::hasColumn('bookings', 'estimated_hours')) {
+            $bookingData['estimated_hours'] = $data['estimated_hours'];
+        }
+
+        if (Schema::hasColumn('bookings', 'payment_method')) {
+            $bookingData['payment_method'] = $data['payment_method'];
+        }
+
         try {
-            // Try full insert first
-            Booking::create(array_merge($safeData, [
-                'estimated_hours' => $data['estimated_hours'],
-                'payment_method'  => $data['payment_method'],
+            Booking::create($bookingData);
+        } catch (\Throwable $e) {
+            DB::table('bookings')->insert(array_merge($bookingData, [
+                'created_at' => now(),
+                'updated_at' => now(),
             ]));
-        } catch (\Exception $e) {
-            // Safe fallback - only basic columns
-            try {
-                DB::table('bookings')->insert($safeData);
-            } catch (\Exception $fallbackError) {
-                return redirect('/my-bookings')
-                    ->with('error', 'Could not create booking. Please contact support.');
-            }
         }
 
         $msg = $data['payment_method'] === 'gcash'
             ? 'Booking confirmed! Please complete your GCash payment to the professional.'
             : 'Booking confirmed! The professional will contact you shortly.';
 
-        return redirect('/my-bookings')->with('success', $msg);
+        return redirect()->route('booking.index')->with('success', $msg);
     }
 }

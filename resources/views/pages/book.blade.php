@@ -44,6 +44,7 @@
             <div class="form-group">
                 <label>Estimated Hours</label>
                 <select name="estimated_hours" id="estimated_hours"
+                    required
                     style="width:100%;border:1.5px solid var(--gray-border);border-radius:10px;padding:10px 14px;font-size:.92rem;font-family:'DM Sans',sans-serif;outline:none;background:#fff">
                     <option value="">Select estimated hours...</option>
                     @for($h = 1; $h <= 8; $h++)
