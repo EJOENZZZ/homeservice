@@ -109,20 +109,40 @@ Route::get('/run-seed-hf2026', function () {
     }
 });
 
-// ── SAFE MIGRATION: Add estimated_hours column ─────
-Route::get('/add-estimated-hours', function () {
+// ── SAFE FULL COLUMN MIGRATION ─────────────────────
+Route::get('/fix-bookings-table', function () {
     if (request('key') !== 'homefix-migrate-2026') {
         abort(403, 'Invalid key');
     }
     try {
+        $added = [];
+
         if (!Schema::hasColumn('bookings', 'estimated_hours')) {
             Schema::table('bookings', function (Blueprint $table) {
                 $table->integer('estimated_hours')->default(1)->after('notes');
             });
-            return '✅ Column "estimated_hours" added successfully!';
-        } else {
-            return '✅ Column "estimated_hours" already exists.';
+            $added[] = 'estimated_hours';
         }
+
+        if (!Schema::hasColumn('bookings', 'payment_method')) {
+            Schema::table('bookings', function (Blueprint $table) {
+                $table->enum('payment_method', ['gcash', 'after_service'])->default('after_service')->after('estimated_hours');
+            });
+            $added[] = 'payment_method';
+        }
+
+        if (!Schema::hasColumn('bookings', 'status')) {
+            Schema::table('bookings', function (Blueprint $table) {
+                $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('pending')->after('payment_method');
+            });
+            $added[] = 'status';
+        }
+
+        if (empty($added)) {
+            return '✅ All columns already exist. Table is up to date.';
+        }
+
+        return '✅ Added columns successfully: ' . implode(', ', $added);
     } catch (\Exception $e) {
         return '❌ Error: ' . $e->getMessage();
     }
