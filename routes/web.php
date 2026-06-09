@@ -94,7 +94,6 @@ Route::delete('/admin/professionals/{id}',       [AdminController::class, 'delet
 Route::get('/admin/testimonials',                [AdminController::class, 'testimonials'])->name('admin.testimonials');
 Route::post('/admin/testimonials/{id}/approve',  [AdminController::class, 'approveTestimonial'])->name('admin.testimonials.approve');
 Route::delete('/admin/testimonials/{id}',        [AdminController::class, 'deleteTestimonial'])->name('admin.testimonials.delete');
-Route::get('/admin/messages',                    [AdminController::class, 'messages'])->name('admin.messages');
 Route::get('/admin/contact-messages',            [AdminController::class, 'contactMessages'])->name('admin.contact-messages');
 Route::post('/admin/contact-messages/{id}/read', [AdminController::class, 'markContactRead'])->name('admin.contact-messages.read');
 Route::delete('/admin/contact-messages/{id}',   [AdminController::class, 'deleteContact'])->name('admin.contact-messages.delete');

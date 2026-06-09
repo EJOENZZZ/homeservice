@@ -281,15 +281,6 @@ class AdminController extends Controller
         return back()->with('success', 'Testimonial deleted.');
     }
 
-    // MESSAGES
-    public function messages()
-    {
-        if ($r = $this->guard()) return $r;
-        $conversations = Conversation::with(['user', 'professional', 'latestMessage'])
-            ->latest('last_message_at')->paginate(20);
-        return view('admin.messages', compact('conversations'));
-    }
-
     // CONTACT MESSAGES
     public function contactMessages()
     {
