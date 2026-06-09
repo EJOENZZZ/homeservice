@@ -59,6 +59,7 @@ class BookingController extends Controller
         $professionalId = $data['professional_id'];
 
         try {
+            // Normal Eloquent create
             Booking::create([
                 'user_id'         => Auth::id(),
                 'professional_id' => $professionalId,
@@ -71,20 +72,25 @@ class BookingController extends Controller
                 'status'          => 'pending',
             ]);
         } catch (\Exception $e) {
-            // Fallback for static professionals or column issues
-            DB::table('bookings')->insert([
-                'user_id'         => Auth::id(),
-                'professional_id' => $professionalId,
-                'service_date'    => $data['service_date'],
-                'service_time'    => $data['service_time'],
-                'address'         => $data['address'],
-                'notes'           => $data['notes'] ?? null,
-                'estimated_hours' => $data['estimated_hours'],
-                'payment_method'  => $data['payment_method'],
-                'status'          => 'pending',
-                'created_at'      => now(),
-                'updated_at'      => now(),
-            ]);
+            // Safe fallback without estimated_hours column (for old table)
+            try {
+                DB::table('bookings')->insert([
+                    'user_id'         => Auth::id(),
+                    'professional_id' => $professionalId,
+                    'service_date'    => $data['service_date'],
+                    'service_time'    => $data['service_time'],
+                    'address'         => $data['address'],
+                    'notes'           => $data['notes'] ?? null,
+                    'payment_method'  => $data['payment_method'],
+                    'status'          => 'pending',
+                    'created_at'      => now(),
+                    'updated_at'      => now(),
+                    // estimated_hours omitted to prevent error
+                ]);
+            } catch (\Exception $fallbackError) {
+                // Last resort
+                return redirect('/my-bookings')->with('error', 'Booking failed. Please try again.');
+            }
         }
 
         $msg = $data['payment_method'] === 'gcash'
