@@ -24,7 +24,7 @@ class BookingController extends Controller
     {
         $bookings = Booking::where('user_id', Auth::id())
             ->with(['professional' => function ($query) {
-                $query->select('id', 'first_name', 'last_name', 'specialty', 'hourly_rate');
+                $query->select('id', 'first_name', 'last_name', 'specialty');
             }])
             ->latest()
             ->get();
@@ -58,43 +58,31 @@ class BookingController extends Controller
 
         $professionalId = $data['professional_id'];
 
+        $bookingData = [
+            'user_id'         => Auth::id(),
+            'professional_id' => $professionalId,
+            'service_date'    => $data['service_date'],
+            'service_time'    => $data['service_time'],
+            'address'         => $data['address'],
+            'notes'           => $data['notes'] ?? null,
+            'payment_method'  => $data['payment_method'],
+            'status'          => 'pending',
+            'created_at'      => now(),
+            'updated_at'      => now(),
+        ];
+
+        // Try with estimated_hours first
         try {
-            // Normal Eloquent create
-            Booking::create([
-                'user_id'         => Auth::id(),
-                'professional_id' => $professionalId,
-                'service_date'    => $data['service_date'],
-                'service_time'    => $data['service_time'],
-                'address'         => $data['address'],
-                'notes'           => $data['notes'] ?? null,
-                'estimated_hours' => $data['estimated_hours'],
-                'payment_method'  => $data['payment_method'],
-                'status'          => 'pending',
-            ]);
+            $bookingData['estimated_hours'] = $data['estimated_hours'];
+            Booking::create($bookingData);
         } catch (\Exception $e) {
-            // Safe fallback without estimated_hours column (for old table)
-            try {
-                DB::table('bookings')->insert([
-                    'user_id'         => Auth::id(),
-                    'professional_id' => $professionalId,
-                    'service_date'    => $data['service_date'],
-                    'service_time'    => $data['service_time'],
-                    'address'         => $data['address'],
-                    'notes'           => $data['notes'] ?? null,
-                    'payment_method'  => $data['payment_method'],
-                    'status'          => 'pending',
-                    'created_at'      => now(),
-                    'updated_at'      => now(),
-                    // estimated_hours omitted to prevent error
-                ]);
-            } catch (\Exception $fallbackError) {
-                // Last resort
-                return redirect('/my-bookings')->with('error', 'Booking failed. Please try again.');
-            }
+            // Fallback without estimated_hours
+            unset($bookingData['estimated_hours']);
+            DB::table('bookings')->insert($bookingData);
         }
 
         $msg = $data['payment_method'] === 'gcash'
-            ? 'Booking confirmed! Please complete your GCash payment to the professional.'
+            ? 'Booking confirmed! Please complete your GCash payment.'
             : 'Booking confirmed! The professional will contact you shortly.';
 
         return redirect('/my-bookings')->with('success', $msg);

@@ -11,6 +11,8 @@ use App\Http\Controllers\ProDashboardController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 
 // ── PUBLIC ──────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -96,7 +98,7 @@ Route::get('/admin/contact-messages',            [AdminController::class, 'conta
 Route::post('/admin/contact-messages/{id}/read', [AdminController::class, 'markContactRead'])->name('admin.contact-messages.read');
 Route::delete('/admin/contact-messages/{id}',   [AdminController::class, 'deleteContact'])->name('admin.contact-messages.delete');
 
-// ── TEMP SEED (delete after use) ──────────────────────
+// ── TEMP SEED ─────────────────────────────────────
 Route::get('/run-seed-hf2026', function () {
     if (request('key') !== 'homefix-seed-2026') abort(403);
     try {
@@ -107,19 +109,20 @@ Route::get('/run-seed-hf2026', function () {
     }
 });
 
-Route::get('/check-pros-hf2026', function () {
-    if (request('key') !== 'homefix-seed-2026') abort(403);
-    return \App\Models\Professional::select('id','first_name','email','password','is_verified','is_active')->get();
-});
-
-// ── TEMPORARY MIGRATION ROUTE (for Vercel) ─────────────
-Route::get('/run-migration', function () {
+// ── SAFE MIGRATION: Add estimated_hours column ─────
+Route::get('/add-estimated-hours', function () {
     if (request('key') !== 'homefix-migrate-2026') {
         abort(403, 'Invalid key');
     }
     try {
-        \Artisan::call('migrate', ['--force' => true]);
-        return '✅ Migrations ran successfully!<br><pre>' . \Artisan::output() . '</pre>';
+        if (!Schema::hasColumn('bookings', 'estimated_hours')) {
+            Schema::table('bookings', function (Blueprint $table) {
+                $table->integer('estimated_hours')->default(1)->after('notes');
+            });
+            return '✅ Column "estimated_hours" added successfully!';
+        } else {
+            return '✅ Column "estimated_hours" already exists.';
+        }
     } catch (\Exception $e) {
         return '❌ Error: ' . $e->getMessage();
     }
