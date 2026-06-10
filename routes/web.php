@@ -94,6 +94,7 @@ Route::delete('/admin/professionals/{id}',       [AdminController::class, 'delet
 Route::get('/admin/testimonials',                [AdminController::class, 'testimonials'])->name('admin.testimonials');
 Route::post('/admin/testimonials/{id}/approve',  [AdminController::class, 'approveTestimonial'])->name('admin.testimonials.approve');
 Route::delete('/admin/testimonials/{id}',        [AdminController::class, 'deleteTestimonial'])->name('admin.testimonials.delete');
+Route::get('/admin/messages',                    [AdminController::class, 'messages'])->name('admin.messages');
 Route::get('/admin/contact-messages',            [AdminController::class, 'contactMessages'])->name('admin.contact-messages');
 Route::post('/admin/contact-messages/{id}/read', [AdminController::class, 'markContactRead'])->name('admin.contact-messages.read');
 Route::delete('/admin/contact-messages/{id}',   [AdminController::class, 'deleteContact'])->name('admin.contact-messages.delete');
@@ -136,6 +137,27 @@ Route::get('/fix-bookings-table', function () {
                 $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('pending')->after('payment_method');
             });
             $added[] = 'status';
+        }
+
+        if (!Schema::hasColumn('bookings', 'user_rating')) {
+            Schema::table('bookings', function (Blueprint $table) {
+                $table->tinyInteger('user_rating')->nullable()->after('status');
+            });
+            $added[] = 'user_rating';
+        }
+
+        if (!Schema::hasColumn('bookings', 'user_review')) {
+            Schema::table('bookings', function (Blueprint $table) {
+                $table->text('user_review')->nullable()->after('user_rating');
+            });
+            $added[] = 'user_review';
+        }
+
+        if (!Schema::hasColumn('bookings', 'rated_at')) {
+            Schema::table('bookings', function (Blueprint $table) {
+                $table->timestamp('rated_at')->nullable()->after('user_review');
+            });
+            $added[] = 'rated_at';
         }
 
         if (empty($added)) {

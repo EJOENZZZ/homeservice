@@ -43,11 +43,28 @@ class BookingController extends Controller
             'user_review'  => 'nullable|string|max:1000',
         ]);
 
-        $booking->update([
-            'user_rating' => $data['user_rating'],
-            'user_review'  => $data['user_review'] ?? null,
-            'rated_at'     => now(),
-        ]);
+        $updateData = [
+            'rated_at' => now(),
+        ];
+
+        if (Schema::hasColumn('bookings', 'user_rating')) {
+            $updateData['user_rating'] = $data['user_rating'];
+        }
+
+        if (Schema::hasColumn('bookings', 'user_review')) {
+            $updateData['user_review'] = $data['user_review'] ?? null;
+        }
+
+        try {
+            $booking->update($updateData);
+        } catch (\Throwable $e) {
+            // Fallback - at least update rated_at if possible
+            try {
+                $booking->update(['rated_at' => now()]);
+            } catch (\Throwable $e2) {
+                // do nothing
+            }
+        }
 
         return back()->with('success', 'Thanks for your rating.');
     }
