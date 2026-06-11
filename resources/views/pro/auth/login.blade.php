@@ -61,8 +61,6 @@
         </form>
 
         <div class="links">
-            <span>New professional? <a href="/pro/register">Register here</a></span>
-            <hr class="divider">
             <a href="/login">← Back to user login</a>
         </div>
     </div>
