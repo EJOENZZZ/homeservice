@@ -16,6 +16,13 @@
             </div>
         </div>
 
+        <div style="background:#F8FAFC;border:1.5px solid var(--gray-border);border-radius:12px;padding:14px 16px;margin-bottom:20px">
+            <div style="font-size:.75rem;font-weight:700;color:var(--gray-mid);letter-spacing:.06em;margin-bottom:4px">PROFESSIONAL AVAILABILITY</div>
+            <div style="font-size:.92rem;color:var(--black);line-height:1.5;font-weight:600">
+                {{ $pro->availability ?: 'Availability has not been set by this professional yet.' }}
+            </div>
+        </div>
+
         @if($errors->any())
         <div class="form-error-box" style="background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:14px 16px;margin-bottom:20px;color:#991B1B;font-size:.88rem">
             <ul style="margin:0;padding-left:16px">

@@ -18,6 +18,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Specialty</th>
+                    <th>Availability</th>
                     <th>Badge</th>
                     <th>Rating</th>
                     <th>Jobs</th>
@@ -43,6 +44,7 @@
                     <td style="font-weight:600">{{ $pro->full_name }}</td>
                     <td style="font-size:.85rem;color:var(--gray-mid)">{{ $pro->email }}</td>
                     <td>{{ $pro->specialty }}</td>
+                    <td style="font-size:.85rem;color:var(--gray-mid);max-width:180px;white-space:normal">{{ $pro->availability ?: 'Not set' }}</td>
                     <td>
                         <span class="badge badge-{{ strtolower(str_replace(' ','',$pro->badge)) }}">
                             {{ $pro->badge }}
@@ -68,7 +70,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9" style="text-align:center;color:#9CA3AF;padding:40px">No professionals yet.</td>
+                    <td colspan="10" style="text-align:center;color:#9CA3AF;padding:40px">No professionals yet.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -137,6 +139,10 @@
             <div class="form-group" style="margin-bottom:16px;">
                 <label>Location</label>
                 <input type="text" name="location" placeholder="e.g. Cebu City">
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label>Availability</label>
+                <textarea name="availability" rows="2" placeholder="e.g. Monday to Friday, 8:00 AM - 5:00 PM"></textarea>
             </div>
             <div class="form-group" style="margin-bottom:20px;">
                 <label>Bio</label>
@@ -215,6 +221,10 @@
                 </div>
             </div>
             <div class="form-group" style="margin-bottom:20px;">
+                <label>Availability</label>
+                <textarea name="availability" id="e_availability" rows="2" placeholder="e.g. Monday to Friday, 8:00 AM - 5:00 PM"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom:20px;">
                 <label>Bio</label>
                 <textarea name="bio" id="e_bio" rows="3"></textarea>
             </div>
@@ -255,6 +265,7 @@ function openEdit(pro) {
     document.getElementById('e_jobs_count').value    = pro.jobs_count;
     document.getElementById('e_hourly_rate').value   = pro.hourly_rate ?? '';
     document.getElementById('e_location').value      = pro.location ?? '';
+    document.getElementById('e_availability').value  = pro.availability ?? '';
     document.getElementById('e_bio').value           = pro.bio ?? '';
     document.getElementById('e_is_active').value     = pro.is_active ? '1' : '0';
     const img = document.getElementById('edit_preview_img');

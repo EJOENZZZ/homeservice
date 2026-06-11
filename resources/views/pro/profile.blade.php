@@ -204,6 +204,10 @@
                     <label>Bio / About Me</label>
                     <textarea name="bio" placeholder="Tell clients about yourself...">{{ old('bio', $pro->bio) }}</textarea>
                 </div>
+                <div class="form-group">
+                    <label>Availability</label>
+                    <textarea name="availability" placeholder="e.g. Monday to Friday, 8:00 AM - 5:00 PM">{{ old('availability', $pro->availability) }}</textarea>
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Facebook URL</label>

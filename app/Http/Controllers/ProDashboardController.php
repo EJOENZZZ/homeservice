@@ -99,6 +99,7 @@ class ProDashboardController extends Controller
             'hourly_rate'      => 'nullable|numeric',
             'location'         => 'nullable|string',
             'years_experience' => 'nullable|integer|min:0',
+            'availability'     => 'nullable|string|max:1000',
             'facebook'         => 'nullable|url|max:255',
             'instagram'        => 'nullable|url|max:255',
             'photo'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',

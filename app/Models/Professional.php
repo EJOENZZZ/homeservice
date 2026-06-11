@@ -17,6 +17,7 @@ class Professional extends Authenticatable
         'verification_code', 'verification_expires_at',
         'last_seen_at', 'must_change_password',
         'phone', 'years_experience', 'facebook', 'instagram',
+        'availability',
     ];
 
     protected $hidden = ['password', 'verification_code'];

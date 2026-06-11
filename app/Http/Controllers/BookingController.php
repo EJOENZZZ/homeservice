@@ -14,10 +14,10 @@ class BookingController extends Controller
     private function staticPros(): array
     {
         return [
-            ['id'=>1,'first_name'=>'Grace', 'last_name'=>'Dela Cruz','specialty'=>'Plumber',     'badge'=>'ELITE',   'rating'=>5.00,'jobs_count'=>451,'hourly_rate'=>350,'location'=>'Cebu City','avatar_url'=>null,'phone'=>'09171234567'],
-            ['id'=>2,'first_name'=>'Marco', 'last_name'=>'Reyes',    'specialty'=>'Electrician', 'badge'=>'TOP PRO', 'rating'=>4.98,'jobs_count'=>312,'hourly_rate'=>400,'location'=>'Mandaue City','avatar_url'=>null,'phone'=>'09281234567'],
-            ['id'=>3,'first_name'=>'Ana',   'last_name'=>'Santos',   'specialty'=>'Carpenter',   'badge'=>'VERIFIED','rating'=>4.97,'jobs_count'=>284,'hourly_rate'=>300,'location'=>'Lapu-Lapu City','avatar_url'=>null,'phone'=>'09391234567'],
-            ['id'=>4,'first_name'=>'Luis',  'last_name'=>'Bautista', 'specialty'=>'Cleaner',     'badge'=>'TOP PRO', 'rating'=>4.95,'jobs_count'=>198,'hourly_rate'=>250,'location'=>'Talisay City','avatar_url'=>null,'phone'=>'09401234567'],
+            ['id'=>1,'first_name'=>'Grace', 'last_name'=>'Dela Cruz','specialty'=>'Plumber',     'badge'=>'ELITE',   'rating'=>5.00,'jobs_count'=>451,'hourly_rate'=>350,'location'=>'Cebu City','avatar_url'=>null,'phone'=>'09171234567','availability'=>'Monday to Friday, 8:00 AM - 5:00 PM'],
+            ['id'=>2,'first_name'=>'Marco', 'last_name'=>'Reyes',    'specialty'=>'Electrician', 'badge'=>'TOP PRO', 'rating'=>4.98,'jobs_count'=>312,'hourly_rate'=>400,'location'=>'Mandaue City','avatar_url'=>null,'phone'=>'09281234567','availability'=>'Tuesday to Saturday, 9:00 AM - 6:00 PM'],
+            ['id'=>3,'first_name'=>'Ana',   'last_name'=>'Santos',   'specialty'=>'Carpenter',   'badge'=>'VERIFIED','rating'=>4.97,'jobs_count'=>284,'hourly_rate'=>300,'location'=>'Lapu-Lapu City','avatar_url'=>null,'phone'=>'09391234567','availability'=>'Monday, Wednesday, Friday, 8:00 AM - 4:00 PM'],
+            ['id'=>4,'first_name'=>'Luis',  'last_name'=>'Bautista', 'specialty'=>'Cleaner',     'badge'=>'TOP PRO', 'rating'=>4.95,'jobs_count'=>198,'hourly_rate'=>250,'location'=>'Talisay City','avatar_url'=>null,'phone'=>'09401234567','availability'=>'Weekends, 7:00 AM - 3:00 PM'],
         ];
     }
 

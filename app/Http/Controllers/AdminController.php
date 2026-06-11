@@ -173,6 +173,7 @@ class AdminController extends Controller
             'jobs_count'  => 'required|integer|min:0',
             'hourly_rate' => 'nullable|numeric',
             'location'    => 'nullable|string',
+            'availability'=> 'nullable|string|max:1000',
             'bio'         => 'nullable|string',
             'photo'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
@@ -212,6 +213,7 @@ class AdminController extends Controller
             'jobs_count'  => 'required|integer|min:0',
             'hourly_rate' => 'nullable|numeric',
             'location'    => 'nullable|string',
+            'availability'=> 'nullable|string|max:1000',
             'bio'         => 'nullable|string',
             'is_active'   => 'nullable',
             'photo'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
