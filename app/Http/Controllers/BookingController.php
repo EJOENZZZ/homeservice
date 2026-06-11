@@ -11,6 +11,69 @@ use Illuminate\Support\Facades\Schema;
 
 class BookingController extends Controller
 {
+    private function findProfessional(int $id)
+    {
+        try {
+            return Professional::findOrFail($id);
+        } catch (\Exception $e) {
+            $data = collect($this->staticPros())->firstWhere('id', $id);
+            abort_if(!$data, 404);
+            return (object) $data;
+        }
+    }
+
+    private function availabilityWindow(?string $availability): ?array
+    {
+        if (!$availability) return null;
+
+        preg_match_all('/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)\s*-\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i', $availability, $matches, PREG_SET_ORDER);
+        if (empty($matches)) {
+            if (!preg_match('/until\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i', $availability, $until)) {
+                return null;
+            }
+
+            $period = strtoupper($until[3] ?? '');
+            if ($period === '') {
+                $period = (int) $until[1] <= 7 ? 'PM' : 'AM';
+            }
+
+            return [
+                0,
+                $this->timeToMinutes((int) $until[1], (int) ($until[2] ?? 0), $period),
+            ];
+        }
+
+        $range = $matches[0];
+        return [
+            $this->timeToMinutes((int) $range[1], (int) ($range[2] ?: 0), strtoupper($range[3])),
+            $this->timeToMinutes((int) $range[4], (int) ($range[5] ?: 0), strtoupper($range[6])),
+        ];
+    }
+
+    private function timeToMinutes(int $hour, int $minute, string $period): int
+    {
+        $hour = $hour % 12;
+        if ($period === 'PM') $hour += 12;
+        return ($hour * 60) + $minute;
+    }
+
+    private function militaryTimeToMinutes(string $time): int
+    {
+        [$hour, $minute] = array_map('intval', explode(':', substr($time, 0, 5)));
+        return ($hour * 60) + $minute;
+    }
+
+    private function isTimeWithinAvailability(string $time, ?string $availability): bool
+    {
+        $window = $this->availabilityWindow($availability);
+        if (!$window) return true;
+
+        [$start, $end] = $window;
+        $selected = $this->militaryTimeToMinutes($time);
+
+        return $selected >= $start && $selected <= $end;
+    }
+
     private function staticPros(): array
     {
         return [
@@ -71,13 +134,7 @@ class BookingController extends Controller
 
     public function create(Request $request)
     {
-        try {
-            $pro = Professional::findOrFail($request->query('professional_id'));
-        } catch (\Exception $e) {
-            $data = collect($this->staticPros())->firstWhere('id', (int)$request->query('professional_id'));
-            abort_if(!$data, 404);
-            $pro = (object) $data;
-        }
+        $pro = $this->findProfessional((int) $request->query('professional_id'));
         return view('pages.book', compact('pro'));
     }
 
@@ -92,6 +149,13 @@ class BookingController extends Controller
             'estimated_hours' => 'required|integer|min:1|max:8',
             'payment_method'  => 'required|in:gcash,after_service',
         ]);
+
+        $pro = $this->findProfessional((int) $data['professional_id']);
+        if (!$this->isTimeWithinAvailability($data['service_time'], $pro->availability ?? null)) {
+            return back()
+                ->withInput()
+                ->withErrors(['service_time' => 'The professional is not available at your selected time. Please choose a time within their availability.']);
+        }
 
         $bookingData = [
             'user_id'         => Auth::id(),

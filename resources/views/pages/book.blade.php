@@ -188,8 +188,50 @@
 const hourlyRate = {{ $pro->hourly_rate ?? 350 }};
 const proName    = "{{ $pro->first_name }} {{ $pro->last_name }}";
 const proPhone   = "{{ $pro->phone ?? '' }}";
+const proAvailability = @json($pro->availability ?? '');
 let qrGenerated  = false;
 let formSubmitting = false;
+
+function timeToMinutes(hour, minute, period) {
+    hour = parseInt(hour, 10) % 12;
+    minute = parseInt(minute || 0, 10);
+    if (period.toUpperCase() === 'PM') hour += 12;
+    return (hour * 60) + minute;
+}
+
+function selectedTimeToMinutes(time) {
+    const parts = time.split(':').map(Number);
+    return (parts[0] * 60) + parts[1];
+}
+
+function availabilityWindow() {
+    if (!proAvailability) return null;
+    const match = proAvailability.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)\s*-\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i);
+    if (!match) {
+        const until = proAvailability.match(/until\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+        if (!until) return null;
+
+        const period = until[3] || (parseInt(until[1], 10) <= 7 ? 'PM' : 'AM');
+        return [0, timeToMinutes(until[1], until[2] || 0, period)];
+    }
+    return [
+        timeToMinutes(match[1], match[2] || 0, match[3]),
+        timeToMinutes(match[4], match[5] || 0, match[6])
+    ];
+}
+
+function isSelectedTimeAvailable() {
+    const time = document.getElementById('service_time').value;
+    const range = availabilityWindow();
+    if (!time || !range) return true;
+
+    const selected = selectedTimeToMinutes(time);
+    return selected >= range[0] && selected <= range[1];
+}
+
+function showUnavailableTimeAlert() {
+    alert('The professional is not available at this time. Please choose a time within: ' + proAvailability);
+}
 
 function selectPayment(method) {
     const gcashWrap = document.getElementById('pay-gcash-wrap');
@@ -241,10 +283,22 @@ function updateSummary() {
 
 document.getElementById('service_date').addEventListener('change', updateSummary);
 document.getElementById('service_time').addEventListener('change', updateSummary);
+document.getElementById('service_time').addEventListener('change', function() {
+    if (!isSelectedTimeAvailable()) {
+        showUnavailableTimeAlert();
+        this.value = '';
+        updateSummary();
+    }
+});
 document.getElementById('estimated_hours').addEventListener('change', updateSummary);
 
 document.getElementById('booking-form').addEventListener('submit', function(e) {
     if (formSubmitting) return;
+    if (!isSelectedTimeAvailable()) {
+        e.preventDefault();
+        showUnavailableTimeAlert();
+        return;
+    }
     const method = document.querySelector('input[name="payment_method"]:checked')?.value;
     if (method === 'gcash') {
         e.preventDefault();
