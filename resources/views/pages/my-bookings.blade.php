@@ -15,7 +15,11 @@
         <div class="booking-card">
             <div class="booking-card-top">
                 <div class="pro-avatar" style="width:48px;height:48px;font-size:.9rem;margin:0">
-                    {{ strtoupper(substr($b->professional->first_name ?? 'P', 0, 1) . substr($b->professional->last_name ?? 'R', 0, 1)) }}
+                    @if($b->professional?->avatar_url)
+                        <img src="{{ $b->professional->avatar_url }}" alt="{{ $b->professional->full_name ?? 'Professional' }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+                    @else
+                        {{ strtoupper(substr($b->professional->first_name ?? 'P', 0, 1) . substr($b->professional->last_name ?? 'R', 0, 1)) }}
+                    @endif
                 </div>
                 <div>
                     <div style="font-weight:700;font-family:'Syne',sans-serif">

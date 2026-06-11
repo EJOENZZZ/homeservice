@@ -88,7 +88,7 @@ class BookingController extends Controller
     {
         $bookings = Booking::where('user_id', Auth::id())
             ->with(['professional' => function ($query) {
-                $query->select('id', 'first_name', 'last_name', 'specialty');
+                $query->select('id', 'first_name', 'last_name', 'specialty', 'avatar');
             }])
             ->latest()
             ->get();
