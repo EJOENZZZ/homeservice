@@ -183,15 +183,16 @@
             <button type="button" onclick="closeContactAdminModal()" style="background:none;border:none;font-size:1.6rem;line-height:1;color:#64748B;cursor:pointer">&times;</button>
         </div>
 
-        @if(session('success'))
-        <div style="background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;border-radius:12px;padding:12px 14px;margin-bottom:16px">{{ session('success') }}</div>
+        @if(session('contact_success'))
+        <div style="background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;border-radius:12px;padding:12px 14px;margin-bottom:16px">{{ session('contact_success') }}</div>
         @endif
-        @if(session('error'))
-        <div style="background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:12px;padding:12px 14px;margin-bottom:16px">{{ session('error') }}</div>
+        @if(session('contact_error'))
+        <div style="background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;border-radius:12px;padding:12px 14px;margin-bottom:16px">{{ session('contact_error') }}</div>
         @endif
 
         <form method="POST" action="{{ route('contact.store') }}">
             @csrf
+            <input type="hidden" name="contact_admin" value="1">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
                 <div>
                     <label style="display:block;font-size:.82rem;font-weight:700;color:#374151;margin-bottom:6px">Name</label>
@@ -230,7 +231,7 @@ function closeContactAdminModal() {
 document.getElementById('contact-admin-modal')?.addEventListener('click', function(e) {
     if (e.target === this) closeContactAdminModal();
 });
-@if(session('success') || session('error') || $errors->any() || old('subject') || old('message'))
+@if(session('contact_admin') || old('contact_admin'))
 openContactAdminModal();
 @endif
 </script>

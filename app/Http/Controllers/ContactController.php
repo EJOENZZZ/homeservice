@@ -34,7 +34,10 @@ class ContactController extends Controller
         ]);
 
         if (!Schema::hasTable('contact_messages')) {
-            return back()->with('error', 'Contact inbox is temporarily unavailable. Please try again later.');
+            return back()
+                ->withInput($request->only('subject', 'message') + ['contact_admin' => '1'])
+                ->with('contact_error', 'Contact inbox is temporarily unavailable. Please try again later.')
+                ->with('contact_admin', true);
         }
 
         ContactMessage::create([
@@ -44,6 +47,8 @@ class ContactController extends Controller
             'message' => $data['message'],
         ]);
 
-        return back()->with('success', 'Message sent successfully. We will get back to you soon.');
+        return back()
+            ->with('contact_success', 'Message sent successfully. We will get back to you soon.')
+            ->with('contact_admin', true);
     }
 }
